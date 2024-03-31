@@ -1,0 +1,15 @@
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@inject NavigationManager NavigationManager
+
+<button @onclick="EditGame" class="btn btn-primary">Edit Game</button>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private void EditGame()
+    {
+        NavigationManager.NavigateTo($"/edit-game/{Id}");
+    }
+}

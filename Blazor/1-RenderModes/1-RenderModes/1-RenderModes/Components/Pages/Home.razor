@@ -1,0 +1,20 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<p>
+    In this application, I have made a few pages, demonstrating the different render modes in .NET 8 Blazor.
+    The weather pages demonstrates static server side rendering (normal SSR) with streaming rendering,
+    simulated with a fake loading time.
+</p>
+
+<br />
+
+<p>
+    The games page demonstrates server side rendering, and the edit / create game page demonstrates
+    WebAssembly rendering (Which can easily be swapped out with auto rendering, if thats preferred)
+    NB: all components that does not have any render mode specified e.g. the layout, will be rendered
+    with static server side rendering
+</p>
