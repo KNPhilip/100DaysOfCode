@@ -1,0 +1,74 @@
+﻿@page "/games"
+@attribute [StreamRendering]
+
+@inject DataContext DbContext
+
+<PageTitle>Video Games</PageTitle>
+
+<h1>Video Games</h1>
+
+@if (videoGames.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Publisher</th>
+                <th>Release Year</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VideoGame videoGame in videoGames)
+            {
+                <tr>
+                    <td>@videoGame.Title</td>
+                    <td>@videoGame.Publisher</td>
+                    <td>@videoGame.ReleaseYear</td>
+                    <td><a href="/edit-game/@videoGame.Id" class="btn btn-link">Edit</a></td>
+                    <td><form method="post" data-enhance
+                          @formname="@($"Delete-GameWithId-{videoGame.Id}")"
+                          @onsubmit="() => DeleteGameWithIdAsync(videoGame.Id)">
+                        <button class="btn btn-link">
+                            Delete
+                        </button>
+                        <AntiforgeryToken />
+                    </form></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a href="/edit-game" class="btn btn-primary">Create Game</a>
+
+@code {
+    List<VideoGame> videoGames = [];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await UpdateVideoGameListAsync();
+    }
+
+    private async Task DeleteGameWithIdAsync(int id)
+    {
+        VideoGame? gameToDelete = await DbContext.VideoGames.FindAsync(id);
+        if (gameToDelete is not null)
+        {
+            DbContext.VideoGames.Remove(gameToDelete);
+            await DbContext.SaveChangesAsync();
+        }
+
+        await UpdateVideoGameListAsync();
+    }
+
+    private async Task UpdateVideoGameListAsync()
+    {
+        videoGames = await DbContext.VideoGames.ToListAsync();
+    }
+}

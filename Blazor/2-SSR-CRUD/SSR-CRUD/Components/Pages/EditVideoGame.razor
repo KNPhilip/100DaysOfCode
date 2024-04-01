@@ -1,0 +1,106 @@
+﻿@page "/edit-game"
+@page "/edit-game/{Id:int}"
+
+@inject DataContext DbContext
+
+@if (Id is null)
+{
+    <PageTitle>Create Video Game</PageTitle>
+    <h3>Add a new Video Game</h3>
+}
+else
+{
+    <PageTitle>Edit "@CurrentGame.Title"</PageTitle>
+    <h3>Edit "@CurrentGame.Title"</h3>
+}
+
+<EditForm Enhance Model="CurrentGame" OnSubmit="HandleSubmitAsync" FormName="GameForm">
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="CurrentGame.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="publisher">Publisher</label>
+        <InputText id="publisher" @bind-Value="CurrentGame.Publisher" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="releaseYear">Release Year</label>
+        <InputNumber id="releaseYear" @bind-Value="CurrentGame.ReleaseYear" class="form-control" />
+    </div>
+    <button class="btn btn-primary">Save</button>
+</EditForm>
+
+<p>@statusMessage</p>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; } = null;
+
+    [SupplyParameterFromForm(FormName = "GameForm")]
+    private VideoGame CurrentGame { get; set; } = new();
+
+    private string statusMessage = string.Empty;
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            VideoGame? game = await DbContext.VideoGames.FindAsync(Id);
+            if (game is not null)
+            {
+                CurrentGame.Title ??= game.Title;
+                CurrentGame.Publisher ??= game.Publisher;
+                CurrentGame.ReleaseYear ??= game.ReleaseYear;
+            }
+        }
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        if (Id is not null)
+        {
+            await UpdateGameAsync();
+        }
+        else
+        {
+            await CreateGameAsync();
+        }
+    }
+
+    private async Task CreateGameAsync()
+    {
+        DbContext.VideoGames.Add(CurrentGame);
+        bool hasSuccessfullyAddedGame = await DbContext.SaveChangesAsync() > 0;
+
+        if (hasSuccessfullyAddedGame)
+        {
+            statusMessage = "Game added successfully!";
+        }
+        else
+        {
+            statusMessage = "Failed to add game!";
+        }
+    }
+
+    private async Task UpdateGameAsync()
+    {
+        VideoGame? gameToUpdate = await DbContext.VideoGames.FindAsync(Id);
+        if (gameToUpdate is not null)
+        {
+            gameToUpdate.Title = CurrentGame.Title;
+            gameToUpdate.Publisher = CurrentGame.Publisher;
+            gameToUpdate.ReleaseYear = CurrentGame.ReleaseYear;
+
+            bool hasSuccessfullyUpdatedGame = await DbContext.SaveChangesAsync() > 0;
+
+            if (hasSuccessfullyUpdatedGame)
+            {
+                statusMessage = "Game updated successfully!";
+            }
+            else
+            {
+                statusMessage = "Failed to update game!";
+            }
+        }
+    }
+}
