@@ -1,0 +1,61 @@
+﻿@page "/games"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject HttpClient HttpClient
+
+<PageTitle>Video Games</PageTitle>
+
+<h1>Video Games</h1>
+
+@if (videoGames.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Publisher</th>
+                <th>Release Year</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VideoGame game in videoGames)
+            {
+                <tr>
+                    <td>@game.Title</td>
+                    <td>@game.Publisher</td>
+                    <td>@game.ReleaseYear</td>
+                    <td><a href="edit-game/@game.Id" class="btn btn-primary">Edit</a></td>
+                    <td><button @onclick="@(() => DeleteGameAsync(game.Id))" class="btn btn-danger">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a href="/edit-game" class="btn btn-primary">Add Game</a>
+
+@code {
+    List<VideoGame> videoGames = [];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await UpdateVideoGamesAsync();
+    }
+
+    private async Task DeleteGameAsync(int id)
+    {
+        await HttpClient.DeleteAsync($"api/videogames/{id}");
+        await UpdateVideoGamesAsync();
+    }
+
+    private async Task UpdateVideoGamesAsync()
+    {
+        videoGames = await HttpClient.GetFromJsonAsync<List<VideoGame>>("api/videogames") ?? [];
+    }
+}

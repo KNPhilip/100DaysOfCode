@@ -1,0 +1,69 @@
+﻿@page "/edit-game"
+@page "/edit-game/{id:int}"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+@if (Id is null) 
+{
+    <PageTitle>Create Game</PageTitle>
+    <h3>Add a new video game</h3>
+}
+else
+{
+    <PageTitle>Edit "@Game.Title"</PageTitle>
+    <h3>Edit the "@Game.Title" video game</h3>
+}
+
+<EditForm Model="Game" OnSubmit="HandleSubmit">
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="Game.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="publisher">Publisher</label>
+        <InputText id="publisher" @bind-Value="Game.Publisher" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="releaseYear">Release Year</label>
+        <InputNumber id="releaseYear" @bind-Value="Game.ReleaseYear" class="form-control" />
+    </div>
+    <button class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public VideoGame Game { get; set; } = new();
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            VideoGame? result = await HttpClient
+                .GetFromJsonAsync<VideoGame>($"api/videogames/{Id}");
+
+            if (result is not null)
+            {
+                Game = result;
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id is not null)
+        {
+            await HttpClient.PutAsJsonAsync($"api/videogames/{Id}", Game);
+        }
+        else
+        {
+            await HttpClient.PostAsJsonAsync("api/videogames", Game);
+        }
+
+        NavigationManager.NavigateTo("/games");
+    }
+}
