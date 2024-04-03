@@ -1,0 +1,63 @@
+﻿@page "/games"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@inject DataContext DbContext
+
+<PageTitle>Video Games</PageTitle>
+
+@if (VideoGames.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Publisher</th>
+                <th>Release Year</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VideoGame game in VideoGames)
+            {
+                <tr>
+                    <td>@game.Title</td>
+                    <td>@game.Publisher</td>
+                    <td>@game.ReleaseYear</td>
+                    <td><a href="edit-game/@game.Id" class="btn btn-primary">Edit</a></td>
+                    <td><button @onclick="@(() => DeleteGameWithIdAsync(game.Id))" class="btn btn-danger">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<a href="edit-game" class="btn btn-primary">Add Game</a>
+
+@code {
+    public List<VideoGame> VideoGames { get; set; } = [];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await UpdateVideoGamesAsync();
+    }
+
+    private async Task DeleteGameWithIdAsync(int id)
+    {
+        VideoGame? gameToDelete = await DbContext.VideoGames.FindAsync(id);
+        if (gameToDelete is not null)
+        {
+            DbContext.VideoGames.Remove(gameToDelete);
+            await DbContext.SaveChangesAsync();
+        }
+        await UpdateVideoGamesAsync();
+    }
+
+    private async Task UpdateVideoGamesAsync()
+    {
+        VideoGames = await DbContext.VideoGames.ToListAsync();
+    }
+}

@@ -1,0 +1,69 @@
+﻿@page "/edit-game"
+@page "/edit-game/{Id:int}"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@inject DataContext DbContext
+@inject NavigationManager NavigationManager
+
+@if (Id is null)
+{
+    <PageTitle>Create Game</PageTitle>
+    <h3>Add a new video game</h3>
+}
+else
+{
+    <PageTitle>Edit "@CurrentGame.Title"</PageTitle>
+    <h3>Update the video game "@CurrentGame.Title"</h3>
+}
+
+<EditForm Model="CurrentGame" OnSubmit="HandleSubmit">
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="CurrentGame.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="publisher">Publisher</label>
+        <InputText id="publisher" @bind-Value="CurrentGame.Publisher" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="releaseYear">Release Year</label>
+        <InputNumber id="releaseYear" @bind-Value="CurrentGame.ReleaseYear" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    public VideoGame CurrentGame { get; set; } = new();
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            CurrentGame = await DbContext.VideoGames.FindAsync(Id) ?? new();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id is not null)
+        {
+            VideoGame? videoGameToEdit = await DbContext.VideoGames.FindAsync(Id);
+            if (videoGameToEdit is not null)
+            {
+                videoGameToEdit.Title = CurrentGame.Title;
+                videoGameToEdit.Publisher = CurrentGame.Publisher;
+                videoGameToEdit.ReleaseYear = CurrentGame.ReleaseYear;
+            }
+        }
+        else
+        {
+            DbContext.VideoGames.Add(CurrentGame);
+        }
+        await DbContext.SaveChangesAsync();
+        NavigationManager.NavigateTo("/games");
+    }
+}
