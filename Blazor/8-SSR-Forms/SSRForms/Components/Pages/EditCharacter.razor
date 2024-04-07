@@ -1,0 +1,128 @@
+﻿@page "/edit-character"
+@page "/edit-character/{Id:int}"
+
+@inject IDataStateService DataStateService
+@inject NavigationManager NavigationManager
+
+@if (Id is null)
+{
+    <PageTitle>Create Character</PageTitle>
+    <h3>Add a new Character</h3>
+}
+else 
+{
+    <PageTitle>Edit "@CurrentCharacter!.Name"</PageTitle>
+    <h3>Edit "@CurrentCharacter!.Name"</h3>
+}
+
+@if (CurrentCharacter is not null)
+{
+    <EditForm Model="CurrentCharacter" 
+              OnValidSubmit="HandleSubmit"
+              OnInvalidSubmit="() => statusMessage = string.Empty"
+              FormName="EditCharacter">
+        <DataAnnotationsValidator />
+        <div>
+            <label for="id">Id</label>
+            <InputNumber id="id" @bind-Value="CurrentCharacter.Id" class="form-control"></InputNumber>
+            <ValidationMessage For="@(() => CurrentCharacter.Id)" />
+        </div>
+        <div>
+            <label for="name">Name</label>
+            <InputText id="name" @bind-Value="CurrentCharacter.Name" class="form-control"></InputText>
+            <ValidationMessage For="@(() => CurrentCharacter.Name)" />
+        </div>
+        <div>
+            <label for="bio">Bio</label>
+            <InputTextArea id="bio" @bind-Value="CurrentCharacter.Bio" class="form-control"></InputTextArea>
+        </div>
+        <div>
+            <label for="birthdate">Birthdate</label>
+            <InputDate id="birthdate" @bind-Value="CurrentCharacter.BirthDate" class="form-control"></InputDate>
+        </div>
+        <div>
+            <label for="team">Team</label><br />
+            <InputRadioGroup id="team" @bind-Value="CurrentCharacter.TeamId" class="form-control">
+                @foreach (Team team in DataStateService.Teams)
+                {
+                    <InputRadio Value="@team.Id" />
+                    <span style="padding-left: 5px;">@team.Name</span>
+                    <br />
+                }
+            </InputRadioGroup>
+        </div>
+        <div>
+            <label for="difficulty">Difficulty</label>
+            <InputSelect id="difficulty" @bind-Value="CurrentCharacter.DifficultyId" class="form-control">
+                @foreach (Difficulty difficulty in DataStateService.Difficulties)
+                {
+                    <option value="@difficulty.Id">@difficulty.Title</option>
+                }
+            </InputSelect>
+        </div>
+        <div>
+            <InputCheckbox id="readyToFight" @bind-Value="CurrentCharacter.IsReadyToFight" class="form-check-input"></InputCheckbox>
+            <label for="readyToFight" class="form-check-label">Ready to Fight</label>
+        </div>
+        <div>
+            <img src="@CurrentCharacter.ImageUrl" class="rounded" style="max-height: 200px;" />
+        </div>
+        <div>
+            <label for="image">Image</label>
+            <InputText class="form-control" @bind-Value="CurrentCharacter.ImageUrl"></InputText>
+        </div>
+        <br />
+        <button class="btn btn-primary">Save</button>
+
+        <p>@statusMessage</p>
+
+        <ValidationSummary />
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; } = null;
+
+    [SupplyParameterFromForm(FormName = "EditCharacter")]
+    private Character? CurrentCharacter { get; set; }
+
+    private int? originalId = null;
+    private string statusMessage = string.Empty;
+
+    protected sealed override void OnParametersSet()
+    {
+        if (Id is not null)
+        {
+            Character? character = DataStateService.Characters.Find(c => c.Id == Id)
+                ?? new();
+            if (character is not null)
+            {
+                CurrentCharacter ??= character;
+                originalId ??= CurrentCharacter.Id;
+            }
+        }
+        else
+        {
+            CurrentCharacter = new Character();
+        }
+    }
+
+    private void HandleSubmit()
+    {
+        if (Id is null)
+        {
+            DataStateService.Characters.Add(CurrentCharacter);
+            statusMessage = "Character created successfully!";
+        }
+        else
+        {
+            Character characterToEdit = DataStateService.Characters.FirstOrDefault(c => c.Id == originalId)!;
+            if (characterToEdit is not null)
+            {
+                characterToEdit = CurrentCharacter.Adapt<Character>();
+                statusMessage = "Character updated successfully!";
+            }
+        }   
+    }
+}
