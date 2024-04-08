@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamRendering", "StreamRendering\StreamRendering.csproj", "{9A8D5309-BADF-4CE0-A44E-1A24D59658FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A8D5309-BADF-4CE0-A44E-1A24D59658FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A8D5309-BADF-4CE0-A44E-1A24D59658FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A8D5309-BADF-4CE0-A44E-1A24D59658FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A8D5309-BADF-4CE0-A44E-1A24D59658FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD674E09-CB3D-4591-9C87-280B47F2BF01}
+	EndGlobalSection
+EndGlobal

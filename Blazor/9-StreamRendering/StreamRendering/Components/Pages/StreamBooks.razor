@@ -1,0 +1,68 @@
+﻿@page "/stream-books"
+@attribute [StreamRendering]
+
+<PageTitle>Books</PageTitle>
+
+@if (Books is null)
+{
+    <p>Loading...</p>
+}
+else {
+    <h1>Books</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Bio</th>
+                <th>Author</th>
+                <th>Published</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Book book in Books) {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Bio</td>
+                    <td>@book.Author</td>
+                    <td>@book.Published.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Book>? Books { get; set; }
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        // Simulate delay to show streaming rendering
+        await Task.Delay(1000);
+        Books = GetAllBooks();
+    }
+
+    private List<Book> GetAllBooks() => [
+        new() 
+        {
+            Title = "Clean Architecture",
+            Bio = "A Craftsman's Guide to Software Structure and Design",
+            Author = "Robert C. Martin",
+            Published = new DateTime(2017, 9, 1)
+        },
+        new() 
+        {
+            Title = "Domain-Driven Design",
+            Bio = "Tackling Complexity in the Heart of Software",
+            Author = "Eric Evans",
+            Published = new DateTime(2003, 8, 22)
+        },
+        new() 
+        {
+            Title = "Refactoring",
+            Bio = "Improving the Design of Existing Code",
+            Author = "Martin Fowler",
+            Published = new DateTime(1999, 1, 1)
+        },
+    ];
+}

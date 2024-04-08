@@ -1,0 +1,66 @@
+﻿@page "/buy-books"
+
+<PageTitle>Books</PageTitle>
+
+@if (Books is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>Books</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Bio</th>
+                <th>Author</th>
+                <th>Published</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Book book in Books)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Bio</td>
+                    <td>@book.Author</td>
+                    <td>@book.Published.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Book>? Books { get; set; }
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        // Simulate delay
+        await Task.Delay(1000);
+        Books = GetAllBooks();
+    }
+
+    private List<Book> GetAllBooks() => [
+        new() {
+            Title = "The C++ Programming Language",
+            Bio = "The world's most trusted and widely read book on C++",
+            Author = "Bjarne Stroustrup",
+            Published = new DateTime(2013, 5, 19)
+        },
+        new() {
+            Title = "Design Patterns",
+            Bio = "Elements of Reusable Object-Oriented Software",
+            Author = "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
+            Published = new DateTime(1994, 10, 21)
+        },
+        new() {
+            Title = "Timeless Laws of Software Development",
+            Bio = "The best way to write software that lasts.",
+            Author = "Jerry Fitzpatrick",
+            Published = new DateTime(2017, 9, 30)
+        }
+    ];
+}
