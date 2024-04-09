@@ -1,0 +1,60 @@
+﻿@page "/games"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+
+@inject IVideoGameInteractor VideoGameInteractor
+
+<PageTitle>Video Games</PageTitle>
+
+@if (VideoGames.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Publisher</th>
+                <th>Release Year</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VideoGame game in VideoGames)
+            {
+                <tr>
+                    <td>@game.Title</td>
+                    <td>@game.Publisher!.Name</td>
+                    <td>@game.ReleaseYear</td>
+                    <td><a href="/edit-game/@game.Id" class="btn btn-primary">Edit</a></td>
+                    <td><button @onclick="@(() => DeleteVideoGameAsync(game.Id))" 
+                        class="btn btn-danger">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a href="/edit-game" class="btn btn-primary">Add Game</a>
+
+@code {
+    private List<VideoGame> VideoGames { get; set; } = [];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await UpdateVideoGamesAsync();
+    }
+
+    private async Task DeleteVideoGameAsync(int id)
+    {
+        await VideoGameInteractor.DeleteVideoGameByIdAsync(id);
+        await UpdateVideoGamesAsync();
+    }
+
+    private async Task UpdateVideoGamesAsync()
+    {
+        VideoGames = await VideoGameInteractor.GetAllVideoGamesAsync();
+    }
+}

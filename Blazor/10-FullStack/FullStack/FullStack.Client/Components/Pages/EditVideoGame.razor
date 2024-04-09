@@ -1,0 +1,78 @@
+﻿@page "/edit-game"
+@page "/edit-game/{Id:int}"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+
+@inject IVideoGameInteractor VideoGameInteractor
+@inject IPublisherInteractor PublisherInteractor
+@inject NavigationManager NavigationManager
+
+@if (Id is null)
+{
+    <PageTitle>Create Game</PageTitle>
+    <h1>Add new game</h1>
+}
+else
+{
+    <PageTitle>Edit "@CurrentGame.Title"</PageTitle>
+    <h1>Edit "@CurrentGame.Title"</h1>
+}
+
+<EditForm Model="CurrentGame" OnSubmit="HandleSubmit">
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="CurrentGame.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="releaseYear">Release Year</label>
+        <InputNumber id="releaseYear" @bind-Value="CurrentGame.ReleaseYear" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="publisher">Publisher</label>
+        <InputSelect @bind-Value="CurrentGame.PublisherId" class="form-control">
+            @foreach (Publisher publisher in PublisherList)
+            {
+                <option value="@publisher.Id">@publisher.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <button class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    public VideoGame CurrentGame { get; set; } = new()
+        {
+            Publisher = new()
+        };
+
+    public List<Publisher> PublisherList { get; set; } = [];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        PublisherList = await PublisherInteractor.GetAllPublishersAsync();
+    }
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            CurrentGame = await VideoGameInteractor.GetVideoGameByIdAsync(Id.Value);
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id is null)
+        {
+            await VideoGameInteractor.CreateVideoGameAsync(CurrentGame);
+        }
+        else
+        {
+            await VideoGameInteractor.UpdateVideoGameAsync((int)Id, CurrentGame);
+        }
+        NavigationManager.NavigateTo("/games");
+    }
+}

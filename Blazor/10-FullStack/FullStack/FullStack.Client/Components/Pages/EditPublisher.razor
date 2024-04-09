@@ -1,0 +1,58 @@
+﻿@page "/edit-publisher"
+@page "/edit-publisher/{Id:int}"
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+
+@inject IPublisherInteractor PublisherInteractor
+@inject NavigationManager NavigationManager
+
+@if (Id is null)
+{
+    <PageTitle>Create Publisher</PageTitle>
+    <h1>Add new publisher</h1>
+}
+else
+{
+    <PageTitle>Edit "@CurrentPublisher.Name"</PageTitle>
+    <h1>Edit "@CurrentPublisher.Name"</h1>
+}
+
+<EditForm Model="CurrentPublisher" OnSubmit="HandleSubmit">
+    <div class="mb-2">
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="CurrentPublisher.Name" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="bio">Bio</label>
+        <InputText id="bio" @bind-Value="CurrentPublisher.Bio" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    public Publisher CurrentPublisher { get; set; } = new();
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            CurrentPublisher = await PublisherInteractor.GetPublisherByIdAsync((int)Id);
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id is null)
+        {
+            await PublisherInteractor.CreatePublisherAsync(CurrentPublisher);
+        }
+        else
+        {
+            await PublisherInteractor.UpdatePublisherAsync((int)Id, CurrentPublisher);
+        }
+        NavigationManager.NavigateTo("/publishers");
+    }
+}
