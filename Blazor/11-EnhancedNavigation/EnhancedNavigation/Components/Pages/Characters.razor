@@ -1,0 +1,140 @@
+﻿@page "/characters"
+
+@inject IDataStateProvider DataStateProvider
+
+<h3>Characters</h3>
+
+@if (CharacterList.Any())
+{
+    <table class="mb-2 table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Health Points</th>
+                <th>Mana Points</th>
+                <th>Backstory</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Character character in CharacterList)
+            {
+                <tr>
+                    <td>@character.Name</td>
+                    <td>@character.Class</td>
+                    <td>@character.HealthPoints</td>
+                    <td>@character.ManaPoints</td>
+                    <td>@character.Backstory</td>
+                    <td>
+                        <form method="post"
+                              data-enhance
+                              @onsubmit="() => ViewCharacter(character.Name)"
+                              @formname="@($"ViewCharacter-{character.Name}")">
+                            <AntiforgeryToken />
+                            <button class="btn btn-primary">View</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No characters found</p>
+}
+
+@if (Character is not null)
+{
+    <EditForm Model="Character"
+              OnValidSubmit="HandleValidSubmit"
+              FormName="EditCharacter"
+              Enhance>
+        <DataAnnotationsValidator />
+
+        <div class="form-group mb-2">
+            <label for="name">Name:</label>
+            <InputText id="name" class="form-control" @bind-Value="Character.Name" />
+            <ValidationMessage For="@(() => Character.Name)" />
+        </div>
+
+        <div class="form-group mb-2">
+            <label>Class:</label>
+            <InputRadioGroup @bind-Value="Character.Class">
+                <div class="form-check">
+                    <InputRadio id="warrior" class="form-check-input" Value="@("Warrior")" />
+                    <label for="warrior" class="form-check-label">Warrior</label>
+                </div>
+                <div class="form-check">
+                    <InputRadio id="mage" class="form-check-input" Value="@("Mage")" />
+                    <label for="mage" class="form-check-label">Mage</label>
+                </div>
+                <div class="form-check">
+                    <InputRadio id="archer" class="form-check-input" Value="@("Archer")" />
+                    <label for="archer" class="form-check-label">Archer</label>
+                </div>
+                <div class="form-check">
+                    <InputRadio id="barbarian" class="form-check-input" Value="@("Barbarian")" />
+                    <label for="barbarian" class="form-check-label">Barbarian</label>
+                </div>
+                <div class="form-check">
+                    <InputRadio id="wizard" class="form-check-input" Value="@("Wizard")" />
+                    <label for="wizard" class="form-check-label">Wizard</label>
+                </div>
+            </InputRadioGroup>
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="healthPoints">Health Points:</label>
+            <InputNumber id="healthPoints" class="form-control" @bind-Value="Character.HealthPoints" />
+            <ValidationMessage For="@(() => Character.HealthPoints)" />
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="manaPoints">Mana Points:</label>
+            <InputNumber id="manaPoints" class="form-control" @bind-Value="Character.ManaPoints" />
+            <ValidationMessage For="@(() => Character.ManaPoints)" />
+        </div>
+
+        <div class="form-group mb-2">
+            <label for="backstory">Backstory:</label>
+            <InputTextArea id="backstory" class="form-control" @bind-Value="Character.Backstory" />
+            <ValidationMessage For="@(() => Character.Backstory)" />
+        </div>
+
+        <button class="btn btn-primary mb-2">Submit</button>
+    </EditForm>
+}
+
+@code {
+    private List<Character> CharacterList = [];
+
+    [SupplyParameterFromForm(FormName = "EditCharacter")]
+    private Character? Character { get; set; } = new();
+
+    protected sealed override void OnInitialized()
+    {
+        LoadCharacters();
+    }
+
+    private void HandleValidSubmit()
+    {
+        if (Character is not null)
+        {
+            DataStateProvider.CreateGameCharacter(Character);
+            Character = new();
+            LoadCharacters();
+        }
+    }
+
+    private void ViewCharacter(string name)
+    {
+        Character = DataStateProvider.GetGameCharacterByName(name) ?? Character;
+    }
+
+    private void LoadCharacters()
+    {
+        CharacterList = DataStateProvider.GetCharacters();
+    }
+}
