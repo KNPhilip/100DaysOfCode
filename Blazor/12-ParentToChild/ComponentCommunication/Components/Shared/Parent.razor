@@ -1,0 +1,14 @@
+﻿<div>
+    <h3>Parent</h3>
+    <span>Hi, my message is "@(ComponentMessage ?? "empty..")"</span>
+
+    <Child ComponentMessage="@ChildComponentMessage" />
+</div>
+
+@code {
+    [Parameter]
+    public string? ComponentMessage { get; set; }
+
+    [Parameter]
+    public string? ChildComponentMessage { get; set; }
+}
