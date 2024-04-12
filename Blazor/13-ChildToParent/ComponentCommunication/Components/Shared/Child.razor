@@ -1,0 +1,16 @@
+﻿<div>
+    <h3>Child</h3>
+    <form method="post"
+        @formname="ButtonInteractivity"
+        @onsubmit="@(() => ParentComponentMessage.InvokeAsync("Parent message from child"))">
+        <button>
+            Get Child's message
+        </button>
+        <AntiforgeryToken />
+    </form>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> ParentComponentMessage { get; set; }
+}

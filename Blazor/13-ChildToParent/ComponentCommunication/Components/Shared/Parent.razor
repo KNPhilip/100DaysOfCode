@@ -1,0 +1,17 @@
+﻿<div>
+    <h3>Parent</h3>
+    <span>The child's message is @(childComponentMessage ?? "not set yet..")</span>
+
+    <br />
+
+    <Child ParentComponentMessage="SetComponentMessageFromChildTo" />
+</div>
+
+@code {
+    private string? childComponentMessage;
+
+    private void SetComponentMessageFromChildTo(string messageFromChild)
+    {
+        childComponentMessage = messageFromChild;
+    }
+}
