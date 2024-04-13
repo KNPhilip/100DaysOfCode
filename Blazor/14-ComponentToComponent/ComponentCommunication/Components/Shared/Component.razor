@@ -1,0 +1,30 @@
+﻿@inject SharedMessageState SharedMessageState
+@implements IDisposable
+
+<div>
+    <h3>@ComponentName</h3>
+    <p>Currently the shared message is: @SharedMessageState.SharedMessage</p>
+    <form method="post"
+        @formname="@($"ButtonInteractivity-{ComponentName}")"
+        @onsubmit="@(() => SharedMessageState.SetSharedMessage($"\"Shared message from {ComponentName}\""))">
+        <button>
+            Fire a shared message
+        </button>
+        <AntiforgeryToken />
+    </form>
+</div>
+
+@code {
+    [Parameter]
+    public string ComponentName { get; set; } = string.Empty;
+
+    protected sealed override void OnInitialized()
+    {
+        SharedMessageState.OnMessageChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        SharedMessageState.OnMessageChanged -= StateHasChanged;
+    }
+}

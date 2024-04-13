@@ -1,0 +1,13 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+div {
+    border: 1px solid black;
+    padding: 24px;
+    margin: 24px;
+}
+
+h1:focus {
+    outline: none;
+}
