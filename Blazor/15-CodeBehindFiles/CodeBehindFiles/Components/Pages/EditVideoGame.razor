@@ -1,0 +1,33 @@
+﻿@page "/edit-game"
+@page "/edit-game/{Id:int}"
+
+@inject DataContext DbContext
+
+@if (Id is null)
+{
+    <PageTitle>Create Video Game</PageTitle>
+    <h3>Add a new Video Game</h3>
+}
+else
+{
+    <PageTitle>Edit "@CurrentGame.Title"</PageTitle>
+    <h3>Edit "@CurrentGame.Title"</h3>
+}
+
+<EditForm Enhance Model="CurrentGame" OnSubmit="HandleSubmitAsync" FormName="GameForm">
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="CurrentGame.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="publisher">Publisher</label>
+        <InputText id="publisher" @bind-Value="CurrentGame.Publisher" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="releaseYear">Release Year</label>
+        <InputNumber id="releaseYear" @bind-Value="CurrentGame.ReleaseYear" class="form-control" />
+    </div>
+    <button class="btn btn-primary">Save</button>
+</EditForm>
+
+<p>@statusMessage</p>
