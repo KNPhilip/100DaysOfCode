@@ -1,0 +1,43 @@
+﻿@page "/map"
+@using BlazorSyncfusion.Shared.Entities;
+@inject HttpClient Http
+
+<h2>Kort over afdelingerne</h2>
+
+<style>
+    .custom-maps {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+</style>
+
+<section class="custom-maps">
+    <SfMaps Height="650">
+        <MapsLayers>
+            <MapsLayer UrlTemplate="https://tile.openstreetmap.org/level/tileX/tileY.png" TValue="string">
+                <MapsMarkerSettings>
+                    <MapsMarker Visible="true"
+                                Shape="Syncfusion.Blazor.Maps.MarkerType.Balloon"
+                                DataSource="Departments" Height="25" Width="25" TValue="Department">
+                        <MapsMarkerTooltipSettings Visible="true" ValuePath="Name"></MapsMarkerTooltipSettings>
+                    </MapsMarker>
+                </MapsMarkerSettings>
+            </MapsLayer>
+        </MapsLayers>
+        <MapsZoomSettings Enable="true"
+                          ShouldZoomInitially="true"></MapsZoomSettings>
+    </SfMaps>
+</section>
+
+@code {
+    public List<Department> Departments { get; set; } = new List<Department>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<List<Department>>("api/departments/map");
+        if (result is not null)
+        {
+            Departments = result;
+        }
+    }
+}

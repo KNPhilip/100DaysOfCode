@@ -1,0 +1,45 @@
+﻿@page "/notes"
+@using BlazorSyncfusion.Shared.Entities
+@using BlazorSyncfusion.Shared.Dtos;
+@using Mapster
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Noter</h3>
+
+<section style="display: flex; flex-wrap: wrap;">
+@foreach (var note in NoteList)
+{
+    <SfCard style="margin: 1.7vw; width: 20vw;">
+        <CardHeader Title=@($"Note på {note.Employee?.NickName} (Oprettet d. {note.DateCreated.ToString()})") />
+        <CardContent Content="@note.Text" />
+        <CardFooter>
+            <CardFooterContent>
+                @if (note.Employee is not null)
+                {
+                    <SfButton Content=@($"Rediger {note.Employee.NickName}s noter")
+                        IsPrimary="true"
+                        OnClick="(() => NavigateToEmployee(note.Employee.Id))"></SfButton>
+                }
+            </CardFooterContent>
+        </CardFooter>
+    </SfCard>
+}
+</section>
+
+@code {
+    public List<Note> NoteList { get; set; } = new List<Note>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var dto = await Http.GetFromJsonAsync<List<NoteDto>>("api/notes");
+        var result = dto?.Adapt<List<Note>>();
+        if (result is not null)
+            NoteList = result;
+    }
+
+    void NavigateToEmployee(int employeeId)
+    {
+        NavigationManager.NavigateTo($"staff/edit/{employeeId}");
+    }
+}

@@ -1,0 +1,109 @@
+﻿@page "/staff"
+@using BlazorSyncfusion.Shared;
+@inject NavigationManager NavigationManager;
+@inject HttpClient Http;
+
+<h3>Ansatte</h3>
+
+<SfGrid DataSource="GridData" AllowFiltering="true" Toolbar="@(new List<string>() { "Søg" })">
+    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.CheckBox"></GridFilterSettings>
+    <GridColumns>
+        <GridColumn Width="45">
+            <Template>
+                @{
+                    var employee = context as Employee;
+                    <SfButton CssClass="e-inherit"
+                          IconCss="e-icons e-edit"
+                          OnClick="@(() => EditEmployee(employee!.Id))"></SfButton>
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Width="45">
+            <Template>
+                @{
+                    var employee = context as Employee;
+                    <SfButton CssClass="e-inherit"
+                          IconCss="e-icons e-delete"
+                          OnClick="@(() => DeleteEmployee(employee!))"></SfButton>
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="FullName" HeaderText="Navn" AllowFiltering="false"></GridColumn>
+        <GridColumn Field="Title" HeaderText="Stilling"></GridColumn>
+        <GridColumn Field="School" HeaderText="Afdeling"></GridColumn>
+        <GridColumn Field="Mail" HeaderText="Mail" AllowFiltering="false"></GridColumn>
+        <GridColumn Field="Phone" HeaderText="Tlf." AllowFiltering="false"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<p>
+    <SfButton IsPrimary="true" Content="Opret ny ansat" OnClick="CreateEmployee" />
+</p>
+
+<SfDialog Width="335px" IsModal="true" @bind-Visible="showDeleteDialog">
+    <DialogTemplates>
+        <Header>Er du sikker?</Header>
+        <Content><p>Er du sikker på at du vil opsige @employeeToDelete!.NickName?</p></Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Ja" IsPrimary="false" OnClick="ConfirmDeleteEmployee"></DialogButton>
+        <DialogButton Content="Nej" IsPrimary="true" OnClick="CancelDeleteEmployee"></DialogButton>
+    </DialogButtons>
+    <DialogAnimationSettings Effect="@DialogEffect.Zoom"></DialogAnimationSettings>
+</SfDialog>
+
+@code {
+    public List<Employee> GridData { get; set; } = new List<Employee>();
+    Employee? employeeToDelete;
+    bool showDeleteDialog = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<List<Employee>>("api/staff");
+        if (result is not null)
+        {
+            GridData = result;
+        }
+
+    }
+
+    void EditEmployee(int id)
+    {
+        NavigationManager.NavigateTo($"staff/edit/{id}");
+    }
+
+    void CreateEmployee()
+    {
+        NavigationManager.NavigateTo($"staff/new");
+    }
+
+    void DeleteEmployee(Employee employee)
+    {
+        employeeToDelete = employee;
+        showDeleteDialog = true;
+    }
+
+    void CancelDeleteEmployee()
+    {
+        showDeleteDialog = false;
+    }
+
+    async Task ConfirmDeleteEmployee()
+    {
+        if(employeeToDelete is null)
+        {
+            return;
+        }
+
+        showDeleteDialog = false;
+        var result = await Http.DeleteAsync($"api/staff/{employeeToDelete.Id}");
+        if (result.IsSuccessStatusCode)
+        {
+            var jsonResult = await result.Content.ReadFromJsonAsync<List<Employee>>();
+            if (jsonResult is not null)
+            {
+                GridData = jsonResult;
+            }
+        }
+    }
+}

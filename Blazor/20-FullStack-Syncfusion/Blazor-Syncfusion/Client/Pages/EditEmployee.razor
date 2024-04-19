@@ -1,0 +1,171 @@
+﻿@page "/staff/edit/{id:int}"
+@page "/staff/new"
+@using BlazorSyncfusion.Shared.Entities;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if (Id is not null)
+{
+    <h3>Rediger @employee.FullName (@employee.NickName)</h3>
+}
+else
+{
+    <h3>Opret en ny ansat</h3>
+}
+
+<div style="display: flex; justify-content: space-between;">
+    <section style="width: 35vw; margin: 20px;">
+        <EditForm Model="employee" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <SfTextBox CssClass="e-outline" class="small" Placeholder="Fornavn"
+                       FloatLabelType="@FloatLabelType.Auto" @bind-Value="employee.FirstName" />
+            <ValidationMessage For="(() => employee.FirstName)" />
+            <SfTextBox CssClass="e-outline" Placeholder="Efternavn"
+                       FloatLabelType="@FloatLabelType.Auto" @bind-Value="employee.LastName" />
+            <ValidationMessage For="(() => employee.LastName)" />
+            <SfTextBox CssClass="e-outline" Placeholder="Initialer"
+                       FloatLabelType="@FloatLabelType.Auto" @bind-Value="employee.NickName" />
+            <ValidationMessage For="(() => employee.NickName)" />
+            <SfTextBox CssClass="e-outline" Placeholder="Stilling"
+                       FloatLabelType="@FloatLabelType.Auto" @bind-Value="employee.Title" />
+            <ValidationMessage For="(() => employee.Mail)" />
+            <SfTextBox CssClass="e-outline" Placeholder="Mail"
+                       FloatLabelType="@FloatLabelType.Auto" @bind-Value="employee.Mail" />
+            <SfTextBox CssClass="e-outline" Placeholder="Telefon (Valgfri)"
+                       FloatLabelType="@FloatLabelType.Auto" @bind-Value="employee.Phone" />
+
+            <ValidationMessage For="(() => employee.BirthDate)" />
+            <SfDatePicker TValue="DateTime" Placeholder="Fødselsdato"
+                          FloatLabelType="@FloatLabelType.Auto" @bind-Value="employee.BirthDate"
+                          Format="MM/dd/yyyy" />
+
+            <hr />
+            @if (Id is not null)
+            {
+                <SfButton CssClass="e-primary" IconCss="e-icons e-save" Content="Redier" type="submit" />
+            }
+            else
+            {
+                <SfButton CssClass="e-primary" IconCss="e-icons e-save" Content="Opret" type="submit" />
+            }
+        </EditForm>
+        <p>
+            @if (Id is not null)
+            {
+                <SfMessage Severity="MessageSeverity.Success" Visible="showSuccessMessage">Kollegaen blev redigeret!</SfMessage>
+            }
+            else
+            {
+                <SfMessage Severity="MessageSeverity.Success" Visible="showSuccessMessage">Kollegaen blev oprettet!</SfMessage>
+            }
+            <SfMessage Severity="MessageSeverity.Error" Visible="showErrorMessage">Oops, noget gik galt..</SfMessage>
+        </p>
+
+    </section>
+    <section style="width: 40vw; margin: 20px;">
+
+        @if (Id is not null)
+        {
+            <h3>Noter</h3>
+            <SfTextBox CssClass="e-outline" Placeholder="Ny note" Multiline="true"
+                   FloatLabelType="@FloatLabelType.Auto" @bind-Value="newNote.Text"></SfTextBox>
+            <SfButton CssClass="e-inherit" Content="Tilføj note" OnClick="CreateNote"></SfButton>
+            <hr />
+            <p>
+                <SfButton IsPrimary="true" Content="Indlæs noter" OnClick="LoadNotes"></SfButton>
+            </p>
+            @foreach (var note in notes)
+            {
+                <SfCard>
+                    <CardHeader Title="@note.DateCreated.ToString()"></CardHeader>
+                    <CardContent Content="@note.Text"></CardContent>
+                    <CardFooter>
+                        <CardFooterContent>
+                            <SfButton
+                                Content="Slet"
+                                IsPrimary="true"
+                                OnClick="@(() => DeleteNote(note.Id))"
+                            >
+                            </SfButton>
+                        </CardFooterContent>
+                    </CardFooter>
+                </SfCard>
+                <br />
+            }
+        }
+    </section>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    public Employee employee { get; set; } = new Employee();
+    public List<Note> notes { get; set; } = new List<Note>();
+    public Note newNote { get; set; } = new Note { Text = string.Empty };
+    bool showSuccessMessage = false;
+    bool showErrorMessage = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is not null)
+        {
+            var result = await Http.GetAsync($"api/staff/{Id}");
+            if (result.IsSuccessStatusCode)
+            {
+                var jsonResult = await result.Content.ReadFromJsonAsync<Employee>();
+                if (jsonResult is not null)
+                    employee = jsonResult;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/staff/new");
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        HttpResponseMessage result;
+        result = Id != null ? await Http.PutAsJsonAsync($"api/staff/{employee.Id}", employee) : await Http.PostAsJsonAsync($"api/staff", employee);
+
+        if (result.IsSuccessStatusCode)
+        {
+            var jsonResult = await result.Content.ReadFromJsonAsync<Employee>();
+            if (jsonResult is not null)
+            {
+                employee = jsonResult;
+                showSuccessMessage = true;
+            }
+        }
+        else
+        {
+            showErrorMessage = true;
+        }
+    }
+
+    async Task CreateNote()
+    {
+        if (Id is null)
+            return;
+
+        newNote.EmployeeId = Id;
+        var result = await Http.PostAsJsonAsync($"api/notes", newNote);
+        if (result.IsSuccessStatusCode)
+            await LoadNotes();
+    }
+
+    async Task DeleteNote(int noteId)
+    {
+        var result = await Http.DeleteFromJsonAsync<List<Note>>($"api/notes/{noteId}");
+        if (result is not null)
+            notes = result;
+    }
+
+    async Task LoadNotes()
+    {
+        var result = await Http.GetFromJsonAsync<List<Note>>($"api/notes/{employee.Id}");
+        if (result is not null)
+            notes = result;
+    }
+}

@@ -1,0 +1,43 @@
+﻿@inject NavigationManager navigationManager
+
+<SfAppBar ColorMode='AppBarColor.Primary'>
+    <SfButton 
+        CssClass='e-inherit' 
+        IconCss='e-icons e-home' 
+        Content='Hjem' 
+        OnClick='(() => NavigateToPage("/"))'
+    />
+    <SfButton 
+        CssClass='e-inherit'
+        IconCss='e-icons e-user'
+        Content='Personale'
+        OnClick='(() => NavigateToPage("/staff"))'
+    />
+    <SfButton 
+        CssClass='e-inherit'
+        IconCss='e-icons e-location'
+        Content='Kort'
+        OnClick='(() => NavigateToPage("/map"))'
+    />
+    <SfButton 
+        CssClass='e-inherit'
+        IconCss='e-icons e-notes'
+        Content='Noter'
+        OnClick='(() => NavigateToPage("/notes"))'
+    />
+
+    <AppBarSpacer></AppBarSpacer>
+    <SfButton 
+        CssClass='e-inherit'
+        IconCss='e-icons e-plus'
+        Content='Opret ny ansat'
+        OnClick='(() => NavigateToPage("/staff/new"))'
+    />
+</SfAppBar>
+
+@code {
+    void NavigateToPage(string page)
+    {
+        navigationManager.NavigateTo(page);
+    }
+}
