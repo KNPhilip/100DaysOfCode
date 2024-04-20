@@ -1,0 +1,37 @@
+﻿@page "/lifecycle"
+@page "/lifecycle/{Id:int}"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Lifecycle page</PageTitle>
+<h3>Lifecycle</h3>
+
+@if (Id is not null)
+{
+    <p>The ID parameter is set: @Id</p>
+}
+else
+{
+    <p>The ID parameter was not set.</p>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("console.log", "--> OnInitialized has been called");
+    }
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("console.log", "--> Now OnParametersSet have been called");
+    }
+
+    protected sealed override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("console.log", "--> OnAfterRender is now called as the last lifecycle method");
+    }
+}
