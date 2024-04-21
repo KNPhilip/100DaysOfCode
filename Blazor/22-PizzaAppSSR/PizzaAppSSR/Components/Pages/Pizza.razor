@@ -1,0 +1,57 @@
+﻿@page "/pizza"
+
+<PageTitle>Pizza</PageTitle>
+<h3>Pizza</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Ingredients</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Models.Pizza pizza in pizzas)
+        {
+            <tr>
+                <td>@pizza.Name</td>
+                <td>@pizza.Description</td>
+                <td>@pizza.Ingredients</td>
+                <td>@pizza.Price</td>
+                <td><img src="@pizza.ImageUrl" style="width: 125px; height: 125px;" /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Models.Pizza> pizzas { get; set; } = [
+            new Models.Pizza 
+            {
+                Name = "Margherita",
+                Description = "The classic pizza, with tomato, mozzarella and basil",
+                Ingredients = "Tomato, mozzarella, basil",
+                Price = 4.99m,
+                ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg"
+            },
+            new Models.Pizza 
+            {
+                Name = "Pepperoni",
+                Description = "The classic pizza, with tomato, mozzarella and pepperoni",
+                Ingredients = "Tomato, mozzarella, pepperoni",
+                Price = 5.99m,
+                ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Pepperoni_pizza.jpg"
+            },
+            new Models.Pizza 
+            {
+                Name = "Hawaiian",
+                Description = "The classic pizza, with tomato, mozzarella, ham and pineapple",
+                Ingredients = "Tomato, mozzarella, ham, pineapple",
+                Price = 6.99m,
+                ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/e/ea/Pizza_with_pineapple.jpg"
+            }
+        ];
+}
