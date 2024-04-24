@@ -1,0 +1,115 @@
+﻿@page "/"
+
+<PageTitle>Blazor Calculator</PageTitle>
+
+@* This is from W3Schools. Couldnt center the div \_(o.o)_/ *@
+<style>
+    .center {
+        margin: auto;
+        width: 50%;
+        padding: 10px;
+    }
+</style>
+
+<div class="center">
+    <h1>Calculator</h1>
+
+    <div>
+        <button @onclick="() => AppendNumber(9)">9</button>
+        <button @onclick="() => AppendNumber(8)">8</button>
+        <button @onclick="() => AppendNumber(7)">7</button>
+        <button @onclick="() => OperatorClicked('+')">+</button>
+    </div>
+    <div>
+        <button @onclick="() => AppendNumber(6)">6</button>
+        <button @onclick="() => AppendNumber(5)">5</button>
+        <button @onclick="() => AppendNumber(4)">4</button>
+        <button @onclick="() => OperatorClicked('-')">-</button>
+    </div>
+    <div>
+        <button @onclick="() => AppendNumber(3)">3</button>
+        <button @onclick="() => AppendNumber(2)">2</button>
+        <button @onclick="() => AppendNumber(1)">1</button>
+        <button @onclick="() => OperatorClicked('*')">*</button>
+    </div>
+    <div>
+        <button @onclick="() => AppendNumber(0)">0</button>
+        <button @onclick="DecimalClicked">.</button>
+        <button @onclick="Calculate">=</button>
+        <button @onclick="Clear">C</button>
+    </div>
+
+    <p>@Display</p>
+</div>
+
+@code {
+    private string Display { get; set; } = "0";
+    private double currentNumber = 0;
+    private double previousNumber = 0;
+    private char lastOperator = '+';
+    private bool isNewNumber = true;
+
+    private void AppendNumber(int number)
+    {
+        if (isNewNumber)
+        {
+            Display = number.ToString();
+            isNewNumber = false;
+        }
+        else
+        {
+            Display += number.ToString();
+        }
+    }
+
+    private void OperatorClicked(char op)
+    {
+        if (!isNewNumber)
+        {
+            Calculate();
+        }
+
+        isNewNumber = true;
+        previousNumber = currentNumber;
+        currentNumber = double.Parse(Display);
+        lastOperator = op;
+    }
+
+    private void DecimalClicked()
+    {
+        if (!Display.Contains('.'))
+        {
+            Display += '.';
+        }
+    }
+
+    private void Clear()
+    {
+        Display = "0";
+        currentNumber = 0;
+        previousNumber = 0;
+        isNewNumber = true;
+    }
+
+    private void Calculate()
+    {
+        switch (lastOperator)
+        {
+            case '+':
+                currentNumber = previousNumber + double.Parse(Display);
+                break;
+            case '-':
+                currentNumber = previousNumber - double.Parse(Display);
+                break;
+            case '*':
+                currentNumber = previousNumber * double.Parse(Display);
+                break;
+            case '/':
+                currentNumber = previousNumber / double.Parse(Display);
+                break;
+        }
+
+        Display = currentNumber.ToString();
+        isNewNumber = true;
+    }
+}
