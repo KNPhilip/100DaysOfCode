@@ -1,0 +1,70 @@
+﻿@page "/"
+@inject HttpClient HttpClient
+
+<PageTitle>Upload Files</PageTitle>
+
+<h1>Upload Files!</h1>
+
+<InputFile OnChange="@OnInputFileChange" multiple />
+
+@if (fileNames.Count > 0)
+{
+    <ul>
+        @foreach (string fileName in fileNames)
+        {
+            <li>
+                File: @fileName
+                <br />
+                <span>
+                    Stored File Name: @GetStoredFileName(fileName)
+                </span>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private int maxAllowedFiles = 3;
+    private long maxFileSize = long.MaxValue;
+    private List<string> fileNames = [];
+    private List<UploadResult> uploadResults = new();
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        using MultipartFormDataContent content = new();
+        foreach (IBrowserFile file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            StreamContent fileContent = new(file.OpenReadStream(maxFileSize));
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+
+            fileNames.Add(file.Name);
+
+            content.Add(fileContent, "\"files\"", file.Name);
+        }
+
+        HttpResponseMessage response = await HttpClient.PostAsync("http://localhost:5098/api", content);
+        List<UploadResult> newUploadResult = await response.Content.ReadFromJsonAsync<List<UploadResult>>() ?? [];
+
+        if (newUploadResult.Count > 0)
+        {
+            uploadResults = uploadResults.Concat(newUploadResult).ToList();
+        }
+    }
+
+    private string? GetStoredFileName(string fileName)
+    {
+        UploadResult? uploadResult = uploadResults.SingleOrDefault(x => x.FileName == fileName);
+        if (uploadResult is not null)
+        {
+            return uploadResult.StoredFileName;
+        }
+
+        return "File not found.";
+    }
+
+    private class UploadResult
+    {
+        public string? FileName { get; set; }
+        public string? StoredFileName { get; set; }
+    }
+}
