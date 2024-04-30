@@ -1,0 +1,39 @@
+﻿@page "/localstorage"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorageService
+
+<PageTitle>Local Storage</PageTitle>
+<h3>Local Storage</h3>
+
+<EditForm Model="new object()" OnValidSubmit="HandleValidSubmitAsync">
+    <InputText @bind-Value="InputValue" />
+
+    <button class="btn btn-primary">Save Value</button>
+</EditForm>
+
+<form method="post"
+    @formname="Retrieve Form"
+    @onsubmit="RetrieveValueAsync"
+>
+    <button class="btn btn-secondary">
+        Retrieve Value
+    </button>
+    <AntiforgeryToken />
+</form>
+
+@code {
+    [SupplyParameterFromForm]
+    private string? InputValue { get; set; }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        await LocalStorageService.SetItemAsync("InputValue", InputValue);
+    }
+
+    private async Task RetrieveValueAsync()
+    {
+        InputValue = await LocalStorageService.GetItemAsync<string>("InputValue")
+            ?? "No value was set..";
+    }
+}
