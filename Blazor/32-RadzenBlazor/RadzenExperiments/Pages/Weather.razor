@@ -1,0 +1,90 @@
+﻿@page "/weather"
+@inject HttpClient Http
+
+<PageTitle>Weather</PageTitle>
+<h1>Weather</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts is null)
+{
+    <div class="rz-m-12">
+        <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+    </div>
+}
+else
+{
+    <RadzenDataGrid Data="@forecasts"
+                    TItem="WeatherForecast"
+                    AllowFiltering="true"
+                    AllowColumnResize="true"
+                    AllowSorting="true"
+                    PageSize="5"
+                    AllowPaging="true">
+        <Columns>
+            <RadzenDataGridColumn TItem="WeatherForecast" Property="Date" Title="Date">
+                <Template Context="forecast">@forecast.Date.ToShortDateString()</Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="WeatherForecast" Property="TemperatureC" Title="Temp. (C)" />
+            <RadzenDataGridColumn TItem="WeatherForecast" Property="TemperatureF" Title="Temp. (F)" />
+            <RadzenDataGridColumn TItem="WeatherForecast" Property="Summary" Title="Summary" />
+        </Columns>
+    </RadzenDataGrid>
+
+    <RadzenChart>
+        <RadzenLineSeries Smooth="true"
+                          Data="@forecasts"
+                          CategoryProperty="Date"
+                          Title="Temp. (C)"
+                          LineType="LineType.Solid"
+                          ValueProperty="TemperatureC">
+            <RadzenMarkers MarkerType="MarkerType.Circle" />
+        </RadzenLineSeries>
+        <RadzenLineSeries Smooth="true"
+                          Data="@forecasts"
+                          CategoryProperty="Date"
+                          Title="Temp. (F)"
+                          LineType="LineType.Solid"
+                          ValueProperty="TemperatureF">
+            <RadzenMarkers MarkerType="MarkerType.Circle" />
+        </RadzenLineSeries>
+        <RadzenValueAxis>
+            <RadzenGridLines Visible="true" />
+            <RadzenAxisTitle Text="Temperature" />
+        </RadzenValueAxis>
+    </RadzenChart>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await Task.Delay(2000);
+        forecasts = 
+        [
+            new() { Date = new DateOnly(2022, 01, 08), TemperatureC = -13, Summary = "Freezing" },
+            new() { Date = new DateOnly(2022, 01, 09), TemperatureC = -2, Summary = "Chilly" },
+            new() { Date = new DateOnly(2022, 01, 10), TemperatureC = 1, Summary = "Freezing" },
+            new() { Date = new DateOnly(2022, 01, 17), TemperatureC = -16, Summary = "Balmy" },
+            new() { Date = new DateOnly(2022, 01, 19), TemperatureC = 14, Summary = "Bracing" },
+            new() { Date = new DateOnly(2022, 01, 22), TemperatureC = -2, Summary = "Chilly" },
+            new() { Date = new DateOnly(2022, 01, 24), TemperatureC = -13, Summary = "Freezing" },
+            new() { Date = new DateOnly(2022, 01, 25), TemperatureC = 14, Summary = "Bracing" },
+            new() { Date = new DateOnly(2022, 02, 06), TemperatureC = -16, Summary = "Balmy" },
+            new() { Date = new DateOnly(2022, 02, 07), TemperatureC = -13, Summary = "Freezing" },
+            new() { Date = new DateOnly(2022, 02, 09), TemperatureC = 1, Summary = "Freezing" },
+            new() { Date = new DateOnly(2022, 02, 12), TemperatureC = 14, Summary = "Bracing" },
+            new() { Date = new DateOnly(2022, 02, 16), TemperatureC = -2, Summary = "Chilly" },
+            new() { Date = new DateOnly(2022, 02, 22), TemperatureC = -16, Summary = "Balmy" },
+        ];
+    }
+
+    public sealed class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
