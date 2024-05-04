@@ -1,0 +1,16 @@
+﻿@page "/"
+
+<HeadContent>
+    <meta name="description" content="@description" />
+</HeadContent>
+
+<PageTitle>Home</PageTitle>
+<h1>Hello, world!</h1>
+
+<p>This page have no render mode, meaning it is rendered on the server.</p>
+<p>This means the client already recieves the fully generated page, which is ideal for Search Engine Optimization,</p>
+<p>since Google's crawlers cannot read something from WebAssemblies or with Blazor Server Mode.</p>
+
+@code {
+    private string description = "A beautiful web page made with Blazor SSR";
+}
