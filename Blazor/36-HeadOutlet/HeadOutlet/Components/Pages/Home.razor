@@ -1,0 +1,20 @@
+﻿@page "/"
+
+@*
+    Special components like the PageTitle can be used to set the title of the page.
+    It will render a title element to the HeadOutlet component.
+*@
+<PageTitle>Home Page!</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@description" />
+</HeadContent>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+@code {
+    private string description = "This is a sample Blazor WebAssembly application."
+        + "This will be rendered through the HeadContent, by the HeadOutlet component.";
+}
