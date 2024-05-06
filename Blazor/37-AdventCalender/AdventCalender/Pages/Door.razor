@@ -1,0 +1,48 @@
+﻿@page "/{Day:int}"
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<PageTitle>Merry Christmas!</PageTitle>
+
+@if (showImage)
+{
+    <img src="images/@(Day).jpg" />
+}
+
+
+@code {
+    [Parameter]
+    public int Day { get; set; }
+
+    bool showImage = false;
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        DateTime today = DateTime.Now;
+        if (today.Day < Day || today.Month != 12)
+        {
+            string suffix = (Day % 100) switch
+            {
+                11 => "th",
+                12 => "th",
+                13 => "th",
+                _ => (Day % 10) switch
+                {
+                    1 => "st",
+                    2 => "nd",
+                    3 => "rd",
+                    _ => "th"
+                }
+            };
+
+            await JSRuntime.InvokeVoidAsync(
+                "alert", $"Be patient, kid. It is not December {Day}{suffix} yet."
+            );
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            showImage = true;
+        }
+    }
+}
