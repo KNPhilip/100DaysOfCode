@@ -1,0 +1,71 @@
+﻿@page "/sendemail"
+@rendermode InteractiveServer
+
+@inject IConfiguration Configuration
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<PageTitle>Send Email</PageTitle>
+
+<EditForm Model="EmailModel" Enhance OnValidSubmit="OnValidSubmitAsync" FormName="SendEmailForm">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="subject">Subject</label>
+        <InputText @bind-Value="EmailModel.Subject" id="subject" class="form-control" />
+        <ValidationMessage For="@(() => EmailModel.Subject)" />
+    </div>
+    <div class="mb-2">
+        <label for="emailReciever">Email Reciever</label>
+        <InputText @bind-Value="EmailModel.Reciever" id="emailReciever" class="form-control" />
+        <ValidationMessage For="@(() => EmailModel.Reciever)" />
+    </div>
+    <div class="mb-2">
+        <label for="emailBody">Email Body</label>
+        <InputText @bind-Value="EmailModel.Body" id="emailBody" class="form-control" />
+        <ValidationMessage For="@(() => EmailModel.Body)" />
+    </div>
+    <button class="btn btn-primary">Send Email</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private EmailFormDto EmailModel { get; set; } = new();
+
+    private class EmailFormDto
+    {
+        [Required]
+        public string? Subject { get; set; }
+        [EmailAddress]
+        public string? Reciever { get; set; }
+        [Required]
+        public string? Body { get; set; }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        MimeMessage email = new();
+        email.From.Add(MailboxAddress.Parse(Configuration["EmailSettings:EmailUsername"]));
+        email.To.Add(MailboxAddress.Parse(EmailModel?.Reciever));
+        email.Subject = "Test Email Subject";
+        email.Body = new TextPart(TextFormat.Plain) 
+        {
+            Text = EmailModel?.Body
+        };
+
+        using SmtpClient smtp = new();
+        smtp.Connect(Configuration["EmailSettings:EmailHost"], 587, SecureSocketOptions.StartTls);
+        smtp.Authenticate(Configuration["EmailSettings:EmailUsername"], Configuration["EmailSettings:EmailPassword"]);
+        smtp.Send(email);
+        smtp.Disconnect(true);
+
+        await JSRuntime.InvokeVoidAsync("alert", "Email sent successfully");
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected sealed override void OnInitialized()
+    {
+        EmailModel.Subject ??= string.Empty;
+        EmailModel.Reciever ??= string.Empty;
+        EmailModel.Body ??= string.Empty;
+    }
+}
