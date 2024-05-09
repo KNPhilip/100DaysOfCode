@@ -1,0 +1,101 @@
+﻿@page "/article-editor"
+@page "/article-editor/{ArticleId:int}"
+
+@inject ISender Sender
+@inject NavigationManager NavigationManager
+
+@if (isEditMode && Article is not null)
+{
+    <PageTitle>Edit Article "@Article.Title"</PageTitle>
+    <h3>Edit Article</h3>
+}
+else
+{
+    <PageTitle>Create New Article</PageTitle>
+    <h3>ArticleEditor</h3>
+}
+
+@if (Article is not null)
+{
+    <EditForm Model="Article" OnSubmit="HandleSubmit" FormName="ArticleEditorForm">
+        <InputText class="form-control" @bind-Value="Article.Title" />
+        <InputTextArea class="form-control" @bind-Value="Article.Content" />
+        <InputDate class="form-control" @bind-Value="Article.DatePublished" />
+        <div class="form-check">
+            <InputCheckbox class="form-check-input" @bind-Value="Article.IsPublished" />
+            <label class="form-check-label"></label>
+        </div>
+
+        <button class="btn btn-primary">Submit</button>
+    </EditForm>
+
+    if (isEditMode)
+    {
+        <p>
+            <form @onsubmit="DeleteArticle" @formname="DeleteArticleForm" method="post">
+                <button class="btn btn-danger">Delete Article</button>
+                <AntiforgeryToken />
+            </form>
+        </p>
+    }
+}
+
+@code {
+    private bool isEditMode => ArticleId is not null;
+    [SupplyParameterFromForm]
+    ArticleModel? Article { get; set; } = new();
+    [Parameter]
+    public int? ArticleId { get; set; }
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (ArticleId is not null)
+        {
+            ArticleResponseDto? result = await Sender
+                .Send(new GetArticleByIdQuery { Id = (int)ArticleId } );
+            if (result is not null)
+            {
+                Article ??= result.Adapt<ArticleModel>();
+                Article.Id = (int)ArticleId;
+            }
+        }
+        else
+        {
+            Article ??= new();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (isEditMode)
+        {
+            UpdateArticleCommand command = Article.Adapt<UpdateArticleCommand>();
+            ArticleResponseDto? result = await Sender.Send(command);
+            if (result is not null)
+            {
+                Article ??= result.Adapt<ArticleModel>();
+            }
+        }
+        else
+        {
+            CreateArticleCommand command = Article.Adapt<CreateArticleCommand>();
+            ArticleResponseDto result = await Sender.Send(command);
+            NavigationManager.NavigateTo($"/article-editor/{result.Id}");
+        }
+    }
+
+    private async Task DeleteArticle()
+    {
+        if (ArticleId is null)
+        {
+            return;
+        }
+
+        DeleteArticleCommand command = new DeleteArticleCommand { Id = (int)ArticleId };
+        bool isSuccess = await Sender.Send(command);
+        if (isSuccess)
+        {
+            NavigationManager.NavigateTo("/articles");
+        }
+    }
+}

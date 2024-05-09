@@ -1,0 +1,36 @@
+﻿@page "/articles"
+@inject ISender Sender
+@attribute [StreamRendering]
+
+<PageTitle>Articles</PageTitle>
+<h3>Articles</h3>
+
+<a href="/article-editor" class="btn btn-primary">Create New Article</a>
+
+@if (articles.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (ArticleResponseDto article in articles)
+    {
+        <h4>@article.Title</h4>
+        <p>@article.Content</p>
+        <small>@article.DatePublished</small>
+        <a href="/article-editor/@article.Id">Edit Article</a>
+    }
+}
+
+@code {
+    private List<ArticleResponseDto> articles = new();
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        List<ArticleResponseDto> result = await Sender.Send(new GetArticlesQuery());
+        if (result is not null)
+        {
+            articles = result;
+        }
+    }
+}
