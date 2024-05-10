@@ -1,0 +1,43 @@
+﻿@page "/tweet"
+@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime JSRuntime
+@inject HttpClient HttpClient
+
+<h3>Tweet</h3>
+
+<p>Publish a tweet through my <a href="https://github.com/KNPhilip/SocialMediaAPI">Social Media API project</a>.</p>
+<p>NB: You will of course have to use your own Twitter API secrets. Defining CORS policies in the SocialMediaAPI will also be necessary.</p>
+
+<EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="tweetText" />
+        <InputText @bind-Value="Model.Text" id="tweetText" class="form-control" />
+        <ValidationMessage For="@(() => Model.Text)" />
+    </div>
+    <button class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    public TweetModel Model { get; set; } = new();
+
+    private async Task OnValidSubmitAsync()
+    {
+        HttpResponseMessage httpResponse = await HttpClient.PostAsJsonAsync("https://localhost:7121/api/v1/Tweets", Model);
+
+        if (httpResponse.IsSuccessStatusCode)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Tweet published successfully!");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Failed to publish tweet.");
+        }
+    }
+
+    public sealed class TweetModel
+    {
+        [Required, StringLength(5)]
+        public string Text { get; set; } = string.Empty;
+    }
+}
