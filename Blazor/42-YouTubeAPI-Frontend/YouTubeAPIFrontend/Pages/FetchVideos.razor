@@ -1,0 +1,97 @@
+﻿@page "/fetch-videos"
+@inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Fetch Videos</PageTitle>
+
+<h3>Fetch Youtube videos</h3>
+
+<p>If you're trying to run this project, remember to boot up the SocialMedia API with your credentials and configure CORS accordingly.</p>
+
+<br />
+
+<EditForm Model="FormModel" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="channelId">Channel ID:</label>
+        <InputText id="channelId" @bind-Value="FormModel.ChannelId" />
+        <ValidationMessage For="@(() => FormModel.ChannelId)" />
+    </div>
+    <div class="mb-2">
+        <label for="amount">Amount:</label>
+        <InputNumber id="amount" @bind-Value="FormModel.Amount" />
+        <ValidationMessage For="@(() => FormModel.Amount)" />
+    </div>
+    <button class="btn btn-primary">Get videos</button>
+</EditForm>
+
+<br />
+
+@if (Data is null)
+{
+    <p><em>No data yet.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Link</th>
+                <th>Thumbnail</th>
+                <th>PublishedAt</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VideoDetails video in Data.Videos)
+            {
+                <tr>
+                    <td>@video.Title</td>
+                    <td>@video.Link</td>
+                    <td>@video.Thumbnail</td>
+                    <td>@video.PublishedAt.ToString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public YtFormModel FormModel { get; set; } = new();
+    public PaginatedResults? Data { get; set; } = null!;
+
+    private async Task OnValidSubmitAsync()
+    {
+        try
+        {
+            Data = await HttpClient.GetFromJsonAsync<PaginatedResults>($"https://localhost:7193/api/v1/YouTube?pageToken={FormModel!.ChannelId}&maxResults={FormModel.Amount}");
+            await JSRuntime.InvokeVoidAsync("alert", "Data fetched successfully.");
+        }
+        catch
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "An error occurred while fetching the data.");
+        }
+    }
+
+    public sealed class YtFormModel
+    {
+        [Required, StringLength(10)]
+        public string ChannelId { get; set; } = string.Empty;
+        public int Amount { get; set; }
+    }
+
+    public sealed class VideoDetails
+    {
+        public string? Title { get; set; }
+        public string? Link { get; set; }
+        public string? Thumbnail { get; set; }
+        public DateTimeOffset? PublishedAt { get; set; }
+    }
+
+    public sealed class PaginatedResults
+    {
+        public List<VideoDetails> Videos { get; set; } = [];
+        public string? NextPageToken { get; set; }
+        public string? PrevPageToken { get; set; }
+    }
+}
