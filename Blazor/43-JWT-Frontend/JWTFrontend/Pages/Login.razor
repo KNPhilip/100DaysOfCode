@@ -1,0 +1,83 @@
+﻿@page "/login"
+@using System.Net.Http.Headers
+@inject HttpClient HttpClient
+@inject ILocalStorageService LocalStorage
+@inject IJSRuntime JSRuntime
+
+<h3>Login</h3>
+
+<p>
+    First boot up the JWT project, clone <a href="https://github.com/KNPhilip/JWT">here</a>. 
+    Afterwards register a user through this UI, then login with the same user. 
+    When you log in, the JWT will be stored in the browser local storage.
+    Finally, retrieve the name from the JWT token. Last step: Profit.
+</p>
+
+<EditForm Model="LoginModel" Context="formContext">
+    <DataAnnotationsValidator />
+
+    <div class="mb-2">
+        <label for="username">Username</label>
+        <InputText id="username" class="form-control" @bind-Value="LoginModel.Username" />
+        <ValidationMessage For="@(() => LoginModel.Username)" />
+    </div>
+
+    <div class="mb-2">
+        <label for="password">Password</label>
+        <InputText id="password" class="form-control" type="password" @bind-Value="LoginModel.Password" />
+        <ValidationMessage For="@(() => LoginModel.Password)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-2" @onclick="() => RegisterAsync(formContext)">Register</button>
+    <button type="submit" class="btn btn-primary mb-2" @onclick="() => LoginAsync(formContext)">Login</button>
+</EditForm>
+
+<button class="btn btn-secondary mb-2" @onclick="RetrieveNameFromJwtAsync">Get my name</button>
+
+<p>@NameClaimType</p>
+
+@code {
+    public LoginDto LoginModel { get; set; } = new();
+    public string NameClaimType { get; set; } = string.Empty;
+
+    protected sealed override void OnInitialized()
+    {
+        HttpClient.BaseAddress = new Uri("https://localhost:7107");
+    }
+
+    public async Task RegisterAsync(EditContext formContext)
+    {
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/api/auth/register", LoginModel);
+        if (response.IsSuccessStatusCode)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "User registered successfully!");
+        }
+    }
+
+    public async Task LoginAsync(EditContext formContext)
+    {
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/api/auth/login", LoginModel);
+        if (response.IsSuccessStatusCode)
+        {
+            string token = await response.Content.ReadAsStringAsync();
+            await LocalStorage.SetItemAsStringAsync("authToken", token);
+            await JSRuntime.InvokeVoidAsync("alert", "User logged in successfully!");
+        }
+    }
+
+    public async Task RetrieveNameFromJwtAsync()
+    {
+        string? jwt = await LocalStorage.GetItemAsStringAsync("authToken");
+
+        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+
+        NameClaimType = await HttpClient.GetStringAsync("/api/auth") 
+            ?? "No name set in the JWT";
+    }
+
+    public sealed class LoginDto
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}
