@@ -1,0 +1,128 @@
+﻿@page "/todo"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>To Do</PageTitle>
+
+<h3>To Do</h3>
+
+<EditForm Model="FormModel" Context="formContext" FormName="ToDoForm">
+    <div class="mb-2">
+        <label for="id">Id</label>
+        <InputNumber id="id" @bind-Value="FormModel.Id" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="FormModel.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="FormModel.Description" class="form-control" />
+    </div>
+    <button class="btn btn-primary" @onclick="() => AddToDoItem(formContext)">Add</button>
+    <button class="btn btn-primary" @onclick="() => EditToDoItem(formContext)">Edit</button>
+</EditForm>
+
+<br />
+
+@if (Items is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Created</th>
+                <th>Completed</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ToDoItem item in Items)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>@item.CreatedDate</td>
+                    <td>
+                        @if (item.IsDone)
+                        {
+                            @item.CompletedDate
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary" @onclick="() => item.IsDone = true">Mark as done</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public List<ToDoItem> Items { get; set; } = [];
+    public ToDoItem FormModel { get; set; } = new();
+
+    private void AddToDoItem(EditContext context)
+    {
+        if (context.Validate())
+        {
+            Items.Add(FormModel);
+            FormModel = new();
+        }
+    }
+
+    private void EditToDoItem(EditContext context)
+    {
+        if (context.Validate())
+        {
+            ToDoItem? itemToEdit = Items.FirstOrDefault(item => item.Id == FormModel.Id);
+            if (itemToEdit is not null)
+            {
+                itemToEdit.Title = FormModel.Title;
+                itemToEdit.Description = FormModel.Description;
+                itemToEdit.IsDone = FormModel.IsDone;
+            }
+        }
+    }
+
+    protected sealed override void OnInitialized()
+    {
+        Items =
+        [
+            new() { Id = 1, Title = "Blazoring", Description = "Do todays Blazor project" },
+            new() { Id = 2, Title = "Lunch", Description = "It is indeed important to have some lunch" },
+            new() { Id = 3, Title = "Exercise", Description = "Working in IT, we should all go for a run at least a few times a week" }
+        ];
+    }
+
+    public sealed class ToDoItem
+    {
+        private DateTime? completedDate = null;
+        private bool isDone;
+
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? CompletedDate { get => completedDate; }
+        public bool IsDone 
+        {
+            get => isDone;
+            set
+            {
+                if (value is true)
+                {
+                    isDone = value;
+                    completedDate = DateTime.Now;
+                }
+                else
+                {
+                    isDone = false;
+                    completedDate = null;
+                }
+            }
+        }
+    }
+}
