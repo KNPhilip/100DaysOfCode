@@ -1,0 +1,61 @@
+﻿@page "/formpage"
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Form Page</PageTitle>
+
+<h3>Form Page</h3>
+
+<p>
+    It is not possible to have multiple submit buttons for a form. However, in Blazor, we can utilize two buttons 
+    simply calling two different methods with an EditContext class, containing some basic metadata of the editing process.
+    In this case we use it as an alternative to the OnValidSubmit, which would usually prevent the method call.
+    Here we cannot prevent the method call, but we can make sure to do a check through said context.
+</p>
+
+@if (TestModel is not null)
+{
+    <EditForm Model="TestModel" Context="formContext">
+        <DataAnnotationsValidator />
+
+        <div class="mb-2">
+            <label for="text">Text</label>
+            <InputText id="text" class="form-control" @bind-Value="TestModel.Text" />
+            <ValidationMessage For="@(() => TestModel.Text)" />
+        </div>
+
+        <div class="mb-2">
+            <label for="date">Date</label>
+            <InputDate id="date" @bind-Value="TestModel.Date" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" @onclick="() => FirstButtonAsync(formContext)">Submit 1</button>
+        <button type="submit" class="btn btn-primary" @onclick="() => SecondButtonAsync(formContext)">Submit 2</button>
+    </EditForm>
+}
+
+@code {
+    public MySimpleModel TestModel { get; set; } = new();
+
+    public async Task FirstButtonAsync(EditContext formContext)
+    {
+        if (formContext.Validate())
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "First button was clicked, so this code block was executed.");
+        }
+    }
+
+    public async Task SecondButtonAsync(EditContext formContext)
+    {
+        if (formContext.Validate())
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Second button was clicked, so this code is executed!");
+        }
+    }
+
+    public sealed class MySimpleModel
+    {
+        [Required, MinLength(5)]
+        public string Text { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
+    }
+}
