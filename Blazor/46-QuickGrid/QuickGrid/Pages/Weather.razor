@@ -1,0 +1,50 @@
+﻿@page "/weather"
+@inject HttpClient Http
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <QuickGrid Items="forecasts.AsQueryable()" Pagination="@pagination">
+        <PropertyColumn Property="f => f.Date" Format="dddd, dd MMMM yyyy" Sortable="true" />
+        <PropertyColumn Property="f => f.TemperatureC" Title="Temp (C)" Sortable="true" />
+        <PropertyColumn Property="f => f.TemperatureF" Title="Temp (F)" Sortable="true" />
+        <PropertyColumn Property="f => f.Summary">
+            <ColumnOptions>
+                <input />
+            </ColumnOptions>
+        </PropertyColumn>
+        <TemplateColumn>
+            <div>
+                <span>It's really @context.Summary</span>
+            </div>
+        </TemplateColumn>
+    </QuickGrid>
+    <Paginator State="@pagination" />
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+    private PaginationState pagination = new() { ItemsPerPage = 3 };
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+    }
+
+    public sealed class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
