@@ -1,0 +1,81 @@
+﻿@page "/weather"
+@inject HttpClient Http
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <QuickGrid Items="FilteredForecasts.AsQueryable()" Pagination="@pagination">
+        <PropertyColumn Property="f => f.Date" Format="dddd, dd MMMM yyyy" Sortable="true" />
+        <PropertyColumn Property="f => f.TemperatureC" Title="Temp (C)" Sortable="true">
+            <ColumnOptions>
+                <p>Min: <input type="range" @bind="minTempC" @bind:event="oninput" min="-50" max="50" /><span>@minTempC</span></p>
+                <p>Max: <input type="range" @bind="maxTempC" @bind:event="oninput" min="-50" max="50" /><span>@maxTempC</span></p>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="f => f.TemperatureF" Title="Temp (F)" Sortable="true" />
+        <PropertyColumn Property="f => f.Summary">
+            <ColumnOptions>
+                <input type="search" autofocus @bind="summaryFilter" @bind:event="oninput" placeholder="Summary" />
+            </ColumnOptions>
+        </PropertyColumn>
+        <TemplateColumn>
+            <div>
+                <span>It's really @context.Summary</span>
+            </div>
+        </TemplateColumn>
+        <TemplateColumn>
+            <button class="btn btn-primary" @onclick="() => ShowItToMe(context)">Show</button>
+        </TemplateColumn>
+    </QuickGrid>
+
+    <Paginator State="@pagination" />
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+    string? summaryFilter;
+    int minTempC = -50;
+    int maxTempC = 50;
+
+    IQueryable<WeatherForecast> FilteredForecasts
+    {
+        get
+        {
+            IQueryable<WeatherForecast> result = forecasts?.AsQueryable().Where(f => f.TemperatureC >= minTempC && f.TemperatureC <= maxTempC)!;
+            if (!string.IsNullOrEmpty(summaryFilter))
+            {
+                result = result.Where(f => f.Summary!.Contains(summaryFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+            return result;
+        }
+    }
+
+    private PaginationState pagination = new() { ItemsPerPage = 5 };
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+    }
+
+    public void ShowItToMe(WeatherForecast forecast)
+    {
+        Console.WriteLine($"It will be {forecast.Summary!.ToLower()}.");
+    }
+
+    public sealed class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
