@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderModeIoCIssues", "RenderModeIoCIssues\RenderModeIoCIssues\RenderModeIoCIssues.csproj", "{6F8AE9CF-D8BE-417E-B2BC-B17E513CCB91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderModeIoCIssues.Client", "RenderModeIoCIssues\RenderModeIoCIssues.Client\RenderModeIoCIssues.Client.csproj", "{F22CC29D-3D70-491C-8F61-A8EC0BCECE3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F8AE9CF-D8BE-417E-B2BC-B17E513CCB91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8AE9CF-D8BE-417E-B2BC-B17E513CCB91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8AE9CF-D8BE-417E-B2BC-B17E513CCB91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8AE9CF-D8BE-417E-B2BC-B17E513CCB91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F22CC29D-3D70-491C-8F61-A8EC0BCECE3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F22CC29D-3D70-491C-8F61-A8EC0BCECE3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F22CC29D-3D70-491C-8F61-A8EC0BCECE3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F22CC29D-3D70-491C-8F61-A8EC0BCECE3F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A918F1B3-2616-4677-A06E-B51AE2633581}
+	EndGlobalSection
+EndGlobal
