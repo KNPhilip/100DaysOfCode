@@ -1,0 +1,79 @@
+﻿@page "/"
+@inject IVideoGameService VideoGameService
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Cascading Dropdowns</PageTitle>
+
+<div class="d-flex flex-column align-items-center pt-5 mt-5 w-100">
+    <div class="mb-2">
+        <label for="platforms">Choose a Platform:</label>
+        <select id="platforms" @bind="selectedPlatformId" @bind:after="OnPlatformSelectedAsync">
+            <option value="0">-- Select a Platform --</option>
+            @foreach (Platform platform in platforms)
+            {
+                <option value="@platform.Id">@platform.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-2">
+        <label for="genres">Choose a Genre:</label>
+        <select id="genres" @bind="selectedGenreId" @bind:after="OnGenreSelectedAsync" disabled="@(!hasSelectedPlatform)">
+            <option value="0">-- Select a Genre --</option>
+            @foreach (Genre genre in genres)
+            {
+                <option value="@genre.Id">@genre.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-2">
+        <label for="videoGame">Choose a Video Game:</label>
+        <select id="videoGame" @bind="selectedVideoGameId" disabled="@(!hasSelectedGenre)">
+            <option value="0">-- Select a Video Game --</option>
+            @foreach (VideoGame videoGame in videoGames)
+            {
+                <option value="@videoGame.Id">@videoGame.Name</option>
+            }
+        </select>
+    </div>
+    <button @onclick="ShowMeTheGameAsync" class="btn btn-primary">Show Selected Game</button>
+</div>
+
+
+@code {
+    private List<Platform> platforms = [];
+    private List<Genre> genres = [];
+    private List<VideoGame> videoGames = [];
+    private int selectedPlatformId;
+    private int selectedGenreId;
+    private int selectedVideoGameId;
+    private bool hasSelectedPlatform => selectedPlatformId > 0;
+    private bool hasSelectedGenre => selectedGenreId > 0;
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        platforms = await VideoGameService.GetAllPlatformsAsync();
+    }
+
+    private async Task OnPlatformSelectedAsync()
+    {
+        genres = await VideoGameService.GetAllGenresByPlatformIdAsync(selectedPlatformId);
+        videoGames.Clear();
+        selectedGenreId = 0;
+        selectedVideoGameId = 0;
+    }
+
+    private async Task OnGenreSelectedAsync()
+    {
+        videoGames = await VideoGameService.GetAllVideoGamesByPlatformAndGenreAsync
+            (selectedPlatformId, selectedGenreId);
+        selectedVideoGameId = 0;
+    }
+
+    private async Task ShowMeTheGameAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("alert", $"Platform: {selectedPlatformId}, GenreId: {selectedGenreId}, VideoGame: {selectedVideoGameId}");
+    }
+}
