@@ -1,0 +1,30 @@
+﻿@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3>Login</h3>
+
+<EditForm Model="loginRequest" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="loginRequest.UserName" class="form-control" />
+        <ValidationMessage For="() => loginRequest.UserName" />
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <InputText id="password" type="password" @bind-Value="loginRequest.Password" class="form-control" />
+        <ValidationMessage For="() => loginRequest.Password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Login</button>
+</EditForm>
+
+@code {
+    LoginRequestDto loginRequest = new();
+
+    async Task HandleSubmit()
+    {
+        await AuthService.Login(loginRequest);
+    }
+}

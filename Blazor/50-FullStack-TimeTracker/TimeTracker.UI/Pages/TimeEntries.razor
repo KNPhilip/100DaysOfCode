@@ -1,0 +1,120 @@
+﻿@page "/timeentries"
+@inject ITimeEntryService TimeEntryService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+@attribute [Authorize]
+
+<PageTitle>Time Entries</PageTitle>
+<h3>Time Entries</h3>
+
+<ProjectSelector />
+
+<button class="btn btn-primary mb-2" @onclick="CreateTimeEntry">
+    Create Time Entry
+</button>
+
+<QuickGrid ItemsProvider="timeEntriesProvider" Pagination="@pagination">
+    <PropertyColumn Property="t => t.Start" />
+    <PropertyColumn Property="t => t.End" />
+    <PropertyColumn Property="t => GetDuration(t.Start, t.End)" Title="Duration" />
+    <PropertyColumn Property="t => t.Project.Name" Title="Project">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="projectFilter" @bind:event="oninput"
+                       placeholder="Project name.." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <TemplateColumn>
+        <button class="btn btn-primary"
+                onclick="@(() => ShowProject(context.Project.Id))">
+            Show
+        </button>
+    </TemplateColumn>
+    <TemplateColumn>
+        <button class="btn btn-primary"
+                onclick="@(() => EditTimeEntry(context.Id))">
+            Edit
+        </button>
+    </TemplateColumn>
+</QuickGrid>
+
+<Paginator State="@pagination" />
+
+@if (projectId > 0)
+{
+    <ProjectDetails ProjectId="projectId" />
+}
+
+@code {
+    int projectId;
+    private string? projectFilter;
+    PaginationState pagination = new() { ItemsPerPage = 10 };
+    GridItemsProvider<TimeEntryResponseDto>? timeEntriesProvider;
+
+    IQueryable<TimeEntryResponseDto> FilteredTimeEntries
+    {
+        get
+        {
+            IQueryable<TimeEntryResponseDto> result = TimeEntryService.TimeEntries.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(projectFilter))
+            {
+                result = result.Where(t => t.Project.Name
+                    .Contains(projectFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            return result;
+        }
+    }
+
+    protected async sealed override Task OnInitializedAsync()
+    {
+        timeEntriesProvider = async req =>
+        {
+            TimeEntryResponseWrapperDto response = await TimeEntryService
+                .GetTimeEntriesAsync(req.StartIndex, (int)req.Count!);
+            return GridItemsProviderResult
+                .From(items: response!.TimeEntries, totalItemCount: response.Count);
+        };
+
+        await TimeEntryService.GetTimeEntriesByProjectAsync(0);
+        TimeEntryService.OnChange += StateHasChanged;
+    }
+
+    private string GetDuration(DateTime? start, DateTime? end)
+    {
+        if (start is not null && end is not null)
+        {
+            var duration = end.Value - start.Value;
+            string result = $"{duration.Hours}h {duration.Minutes}m";
+            return result;
+        }
+        return string.Empty;
+    }
+
+    private void ShowProject(int id)
+    {
+        if (projectId == id)
+            return;
+
+        projectId = id;
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        TimeEntryService.OnChange -= StateHasChanged;
+    }
+
+    private void CreateTimeEntry()
+    {
+        NavigationManager.NavigateTo("/timeentry");
+    }
+
+    private void EditTimeEntry(int id)
+    {
+        NavigationManager.NavigateTo("/timeentry/" + id);
+    }
+}
