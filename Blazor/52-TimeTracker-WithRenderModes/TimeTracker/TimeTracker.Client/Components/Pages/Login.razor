@@ -1,0 +1,53 @@
+﻿@page "/login"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<PageTitle>TimeTracker | Login</PageTitle>
+
+<div class="lg:px-80">
+
+    <h3>Login</h3>
+
+    <EditForm Model="loginRequest" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+    
+        <LibInputText Label="Name" Id="name" @bind-Value="loginRequest.UserName" 
+                     ValidationFor="() => loginRequest.UserName" />
+        <LibInputText Label="Password" Id="password" @bind-Value="loginRequest.Password"
+                     ValidationFor="() => loginRequest.Password" Type="password" />
+
+        <LibButton Text="Login" Type="submit" AddMarginTop />
+    </EditForm>
+
+    @if (loginFailed)
+    {
+        <div>
+            <span class="text-xs text-red-600 font-bold my-1">@errorMessage</span>
+        </div>
+    }
+</div>
+
+@code {
+    private LoginRequestDto loginRequest = new();
+    private bool loginFailed = false;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleSubmit()
+    {
+        loginFailed = false;
+        LoginResponseDto response = await AuthService.Login(loginRequest);
+
+        if (!response.IsSuccessful && response.Error is not null)
+        {
+            errorMessage = response.Error;
+            loginFailed = true;
+        }
+        else if (!response.IsSuccessful)
+        {
+            errorMessage = "An unexpected error occurred";
+            loginFailed = true;
+        }
+    }
+}

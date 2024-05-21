@@ -1,0 +1,69 @@
+﻿@page "/register"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject IAuthService AuthService
+
+<PageTitle>TimeTracker | Register</PageTitle>
+
+<div class="lg:px-80">
+    <h3>Register</h3>
+
+    <EditForm Model="newUser" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <LibInputText Label="Name" @bind-Value="newUser.UserName"
+                      ValidationFor="() => newUser.UserName" />
+        <LibInputText Label="Email" @bind-Value="newUser.Email"
+                      ValidationFor="() => newUser.Email" />
+        <LibInputText Label="Password" @bind-Value="newUser.Password"
+                      ValidationFor="() => newUser.Password" Type="password" />
+        <LibInputText Label="Confirm Password" @bind-Value="newUser.ConfirmPassword"
+                      ValidationFor="() => newUser.ConfirmPassword" Type="password" />
+
+        <LibButton Text="Register" Type="submit" AddMarginTop />
+    </EditForm>
+</div>
+
+@if (registrationFailed)
+{
+    @foreach (string error in errors)
+    {
+        <div>
+            <span class="text-xs text-red-600 font-bold my-1">@error</span>
+        </div>
+    }
+}
+@if (registrationSuccessful)
+{
+    <div>
+        <span class="text-xs text-green-600 font-bold my-1">
+            Registration successful! You may <a href="login" class="underline">login</a> now.
+        </span>
+    </div>
+}
+
+@code {
+    private AccountRegistrationRequestDto newUser = new();
+    private bool registrationFailed = false;
+    private bool registrationSuccessful = false;
+    private List<string> errors = [];
+
+    private async Task HandleSubmit()
+    {
+        registrationFailed = registrationSuccessful = false;
+        errors = [];
+
+        AccountRegistrationResponseDto response = await AuthService
+            .RegisterAsync(newUser);
+
+        if (!response.IsSuccessful && response.Errors is not null)
+        {
+            errors = response.Errors.ToList();
+            registrationFailed = true;
+        }
+        else if (!response.IsSuccessful)
+        {
+            errors.Add("An unexpected error occurred");
+            registrationFailed = true;
+        }
+    }
+}

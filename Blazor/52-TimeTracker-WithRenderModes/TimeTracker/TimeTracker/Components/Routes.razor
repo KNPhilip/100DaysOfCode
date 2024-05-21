@@ -1,0 +1,12 @@
+﻿<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.TimeTrackerLayout)">
+            <NotAuthorized>
+                <h3>Whoops!</h3>
+                Looks like you're not logged in<br />
+                Please <a href="login">log in</a> or <a href="register">register</a> first.
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

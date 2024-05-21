@@ -1,0 +1,41 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject ITimeEntryService TimeEntryService
+@inject IProjectService ProjectService
+@implements IDisposable
+
+<div class="form-group">
+    <InputSelect @bind-Value="projectId" @oninput="OnInput" 
+                 class="mt-2 p-2 rounded-md border-gray-200 shadow-sm sm:text-sm">
+        <option value="0">All Projects</option>
+        @foreach (ProjectResponseDto project in ProjectService.Projects)
+        {
+            <option value="@project.Id">@project.Name</option>
+        }
+    </InputSelect>
+</div>
+
+@code {
+    private int projectId;
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        if (e.Value is not null)
+        {
+            if(int.TryParse(e.Value.ToString(), out int id))
+            {
+                await TimeEntryService.GetTimeEntriesByProjectAsync(id);
+            }
+        }
+    }
+
+    protected sealed override void OnInitialized()
+    {
+        ProjectService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        ProjectService.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,95 @@
+﻿@page "/timeentry"
+@page "/timeentry/{id:int}"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@attribute [Authorize]
+
+@inject ITimeEntryService TimeEntryService
+@inject IProjectService ProjectService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<PageTitle>TimeTracker | @(Id is null ? "Create" : "Edit") Time Entry</PageTitle>
+
+<div class="lg:px-80">
+    <h3>@(Id is null ? "Create a new" : "Edit") Time Entry</h3>
+
+    <EditForm Model="timeEntry" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+
+        <LibInputDateTime Id="startDate" Label="Start" @bind-Value="timeEntry.Start" 
+            ValidationFor="() => timeEntry.Start" />
+        <LibInputDateTimeNullable Id="endDate" Label="End" @bind-Value="timeEntry.End" 
+            ValidationFor="() => timeEntry.End" />
+        <LibInputSelect Id="project" Label="Project" @bind-Value="timeEntry.ProjectId" 
+            ValidationFor="() => timeEntry.ProjectId" Items="ProjectService.Projects
+                .Select(p => new LibInputSelect.SelectListItem { Value = p.Id
+                    .ToString(), DisplayName = p.Name })" />
+
+        <div class="flex gap-4">
+            @if (Id is not null)
+            {
+                <LibButton Text="Delete" Level="LibButton.ButtonLevel.Danger" AddMarginTop OnClick="DeleteTimeEntry" />
+            }
+            <LibButton Text="Submit" Type="submit" AddMarginTop />
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private TimeEntryRequestDto timeEntry = new();
+
+    protected sealed override async void OnInitialized()
+    {
+        ProjectService.OnChange += StateHasChanged;
+        await ProjectService.LoadAllProjectsAsync();
+    }
+
+    protected async sealed override Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            TimeEntryResponseDto result = await TimeEntryService.GetTimeEntryByIdAsync((int)Id);
+            timeEntry = new TimeEntryRequestDto
+                {
+                    ProjectId = result.Id,
+                    Start = result.Start,
+                    End = result.End
+                };
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id is null)
+        {
+            await TimeEntryService.CreateTimeEntryAsync(timeEntry);
+            NavigationManager.NavigateTo("/timeentries");
+        }
+        else
+        {
+            await TimeEntryService.UpdateTimeEntryAsync((int)Id, timeEntry);
+            NavigationManager.NavigateTo("/timeentries");
+        }
+    }
+
+    private async Task DeleteTimeEntry()
+    {
+        bool confirmed = await JSRuntime
+            .InvokeAsync<bool>("confirm", "Do you really want to delete this entry?");
+
+        if (Id is not null && confirmed)
+        {
+            await TimeEntryService.DeleteTimeEntryAsync((int)Id);
+            NavigationManager.NavigateTo("/timeentries");
+        }
+    }
+
+    public void Dispose()
+    {
+        ProjectService.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,19 @@
+﻿@page "/logout"
+@inject SignInManager<User> SignInManager
+@inject NavigationManager NavigationManager
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    protected async sealed override Task OnInitializedAsync()
+    {
+        ClaimsPrincipal user = HttpContext.User;
+
+        if (SignInManager.IsSignedIn(user))
+        {
+            await SignInManager.SignOutAsync();
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

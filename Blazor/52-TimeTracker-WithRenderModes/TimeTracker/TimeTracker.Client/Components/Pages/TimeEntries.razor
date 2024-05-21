@@ -1,0 +1,161 @@
+﻿@page "/timeentries"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@attribute [Authorize]
+
+@inject ITimeEntryService TimeEntryService
+@inject IProjectService ProjectService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<PageTitle>TimeTracker | Time Entries</PageTitle>
+<h3>Time Entries</h3>
+
+<TimeEntryTabs TabChanged="TabChanged" />
+
+<TimeEntryFilter Type="currentFilterType" />
+
+<QuickGrid Items="FilteredTimeEntries" Pagination="@pagination">
+    <PropertyColumn Property="t => t.Start" />
+    <PropertyColumn Property="t => t.End" />
+    <PropertyColumn Property="t => GetDuration(t.Start, t.End)" Title="Duration" />
+    <PropertyColumn Property="t => t.Project.Name" Title="Project">
+        <ColumnOptions>
+            <div>
+                <input type="search" autofocus @bind="projectFilter" @bind:event="oninput"
+                       placeholder="Project name.." 
+                       class="mt-1 p-2 w-full rounded-md border-gray-200 shadow-sm sm:text-sm" />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <TemplateColumn>
+        <LibButton Text="Show" OnClick="@(() => ShowProject(context.Project.Id))" />
+    </TemplateColumn>
+    <TemplateColumn>
+        <button class="block rounded-md bg-teal-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-teal-700"
+                onclick="@(() => EditTimeEntry(context.Id))">
+            <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z" />
+                <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z" />
+            </svg>
+        </button>
+    </TemplateColumn>
+</QuickGrid>
+
+<Paginator State="@pagination" />
+
+<div class="flex justify-content-between items-end">
+    <LibButton AddMarginTop Text="Create Time Entry" OnClick="CreateTimeEntry" />
+    <span class="font-bold text-lg-center">Total: @GetTotalDuration()</span>
+</div>
+
+@if (projectId > 0)
+{
+    <ProjectDetails ProjectId="projectId" />
+}
+
+@if (currentFilterType == TimeEntryTabs.TimeEntryFilterType.Year)
+{
+    <TimeEntryYearChart />
+}
+
+@code {
+    private int projectId;
+    private string? projectFilter;
+    private PaginationState pagination = new() { ItemsPerPage = 10 };
+    private TimeEntryTabs.TimeEntryFilterType currentFilterType = 
+        TimeEntryTabs.TimeEntryFilterType.Day;
+
+    IQueryable<TimeEntryResponseDto> FilteredTimeEntries
+    {
+        get
+        {
+            IQueryable<TimeEntryResponseDto> result = TimeEntryService.TimeEntries.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(projectFilter))
+            {
+                result = result.Where(t => t.Project.Name
+                    .Contains(projectFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            return result;
+        }
+    }
+
+    protected async sealed override Task OnInitializedAsync()
+    {
+        TimeEntryService.OnChange += StateHasChanged;
+        await ProjectService.LoadAllProjectsAsync();
+        await LoadInitalTimeEntries(currentFilterType);
+    }
+
+    private async Task LoadInitalTimeEntries(TimeEntryTabs.TimeEntryFilterType type)
+    {
+        DateTime now = DateTime.Now;
+        switch (type)
+        {
+            case TimeEntryTabs.TimeEntryFilterType.Day:
+                await TimeEntryService.GetTimeEntriesByDayAsync(now.Year, now.Month, now.Day);
+                break;
+            case TimeEntryTabs.TimeEntryFilterType.Month:
+                await TimeEntryService.GetTimeEntriesByMonthAsync(now.Year, now.Month);
+                break;
+            case TimeEntryTabs.TimeEntryFilterType.Year:
+                await TimeEntryService.GetTimeEntriesByYearAsync(now.Year);
+                break;
+            case TimeEntryTabs.TimeEntryFilterType.Project:
+                await TimeEntryService.GetTimeEntriesByProjectAsync(0);
+                break;
+        }
+    }
+
+    private async Task TabChanged(TimeEntryTabs.TimeEntryFilterType type)
+    {
+        currentFilterType = type;
+        await LoadInitalTimeEntries(type);
+    }
+
+    private string GetDuration(DateTime? start, DateTime? end)
+    {
+        if (start is not null && end is not null)
+        {
+            TimeSpan duration = end.Value - start.Value;
+            string result = $"{duration.Hours}h {duration.Minutes}m";
+            return result;
+        }
+        return string.Empty;
+    }
+
+    private string GetTotalDuration()
+    {
+        int totalMinutes = (int)TimeEntryService.TotalDuration.TotalMinutes;
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+
+        return $"{hours}h {minutes}m";
+    }
+
+    private void ShowProject(int id)
+    {
+        if (projectId == id)
+            return;
+
+        projectId = id;
+
+        StateHasChanged();
+    }
+
+    private void CreateTimeEntry()
+    {
+        NavigationManager.NavigateTo("/timeentry");
+    }
+
+    private void EditTimeEntry(int id)
+    {
+        NavigationManager.NavigateTo("/timeentry/" + id);
+    }
+
+    public void Dispose()
+    {
+        TimeEntryService.OnChange -= StateHasChanged;
+    }
+}
