@@ -1,0 +1,106 @@
+﻿@page "/"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject NavigationManager NavigationManager
+
+<PageTitle>TicTacToe</PageTitle>
+
+<h3 class="text-4xl font-bold py-4">Welcome to Blazor TicTacToe!</h3>
+
+@if (currentRoom is null)
+{
+    <EditForm Model="createRoom" OnValidSubmit="CreateRoom">
+        <DataAnnotationsValidator />
+        <div>
+            <InputText id="playerName" class="rounded-md my-2 p-2 text-black" 
+                @bind-Value="createRoom!.PlayerName" placeholder="Player name" />
+            <ValidationMessage For="() => createRoom.PlayerName" />
+        </div>
+        <div>
+            <InputText id="roomName" class="rounded-md my-2 p-2 text-black" 
+                @bind-Value="createRoom!.RoomName" placeholder="Room name" />
+            <ValidationMessage For="() => createRoom.RoomName" />
+        </div>
+        @* <input @bind="playerName" class="rounded-md my-2 p-2 text-black" placeholder="Your Name" />
+        <input @bind="currentRoomName" class="rounded-md m-2 p-2 text-black" placeholder="Room Name" />
+         *@<button type="submit" class="rounded-md my-2 p-2 bg-blue-400 text-black">
+            Create Room
+        </button>
+    </EditForm>
+
+    if (rooms.Count > 0)
+    {
+        <h3 class="text-2xl font-bold py-2">Or join a room below:</h3>
+        <ul>
+            @foreach (GameRoom room in rooms)
+            {
+                <li>
+                    <button @onclick="() => JoinRoom(room.RoomId)"
+                            class="rounded-md bg-blue-400 text-white p-2 my-1">
+                        @room.RoomName
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+}
+else
+{
+    <CascadingValue Value="hubConnection">
+        <Room CurrentRoom="currentRoom" />
+    </CascadingValue>
+}
+
+@code {
+    private HubConnection? hubConnection;
+    private CreateRoomDto createRoom = new();
+    private GameRoom? currentRoom;
+    private List<GameRoom> rooms = [];
+
+    protected async sealed override Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/gamehub"))
+            .Build();
+
+        hubConnection.On<List<GameRoom>>("Rooms", (roomList) =>
+        {
+            Console.WriteLine($"We got rooms! Count = {roomList.Count}");
+            rooms = roomList;
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task CreateRoom()
+    {
+        if (hubConnection is null)
+        {
+            return;
+        }
+
+        currentRoom = await hubConnection
+            .InvokeAsync<GameRoom>("CreateRoom", createRoom!.RoomName, createRoom.PlayerName);
+    }
+
+    private async Task JoinRoom(string roomId)
+    {
+        if (hubConnection is null)
+        {
+            return;
+        }
+
+        GameRoom joinedRoom = await hubConnection
+            .InvokeAsync<GameRoom>("JoinRoom", roomId, createRoom!.PlayerName);
+
+        if (joinedRoom is not null)
+        {
+            currentRoom = joinedRoom;
+        }
+        else
+        {
+            Console.WriteLine("Room is full or does not exist.");
+        }
+    }
+}
