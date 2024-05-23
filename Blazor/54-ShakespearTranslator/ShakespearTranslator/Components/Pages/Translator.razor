@@ -1,0 +1,54 @@
+﻿@page "/translator"
+@inject HttpClient HttpClient
+
+<h3>Translator</h3>
+
+<EditForm Model="FormModel" OnValidSubmit="OnValidSubmitAsync" FormName="ShakespearForm" Enhance>
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="text"></label>
+        <InputText id="text" @bind-Value="FormModel.Text" class="form-control" />
+        <ValidationMessage For="() => FormModel.Text" />
+    </div>
+    <button class="btn btn-primary">Translate</button>
+</EditForm>
+
+<br />
+
+<p>@translatedText</p>
+
+@code {
+    private string? translatedText = string.Empty;
+    [SupplyParameterFromForm]
+    public TranslateModel FormModel { get; set; } = new();
+
+    private async Task OnValidSubmitAsync()
+    {
+        Dictionary<string, string> formData = new()
+        {
+            { "text", FormModel.Text }
+        };
+
+        HttpResponseMessage shakespearResponse = await HttpClient
+            .PostAsync("https://api.funtranslations.com/translate/shakespeare.json", new FormUrlEncodedContent(formData));
+
+        ShakespearRoot? shakespearContent = await shakespearResponse.Content
+            .ReadFromJsonAsync<ShakespearRoot>();
+
+        translatedText = shakespearContent?.contents!.translated;
+    }
+
+    protected sealed override void OnParametersSet()
+    {
+        if (FormModel is not null)
+        {
+            FormModel.Text ??= string.Empty;
+        }
+    }
+
+    public sealed class TranslateModel
+    {
+        [Required, MinLength(4)]
+        public string Text { get; set; } = string.Empty;
+    }
+}
