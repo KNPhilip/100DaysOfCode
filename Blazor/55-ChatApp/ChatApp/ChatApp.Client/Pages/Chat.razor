@@ -1,0 +1,55 @@
+﻿@page "/chat"
+@inject NavigationManager NavigationManager
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Chat</PageTitle>
+
+<h3>Chat</h3>
+
+@if (IsConnected)
+{
+    <input type="text" @bind="userInput" />
+    <input type="text" @bind="messageInput" />
+    <button @onclick="Send">Send</button>
+
+    <ul id="messagesList">
+        @foreach (string message in messages)
+        {
+            <li>@message</li>
+        }
+    </ul>
+}
+else
+{
+    <span>Connecting...</span>
+}
+
+@code {
+    private HubConnection? hubConnection;
+    private List<string> messages = [];
+    private string userInput = string.Empty;
+    private string messageInput = string.Empty;
+
+    private bool IsConnected { get => hubConnection?.State == HubConnectionState.Connected; }
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
+        {
+            string encodedMessage = $"{user}: {message}";
+            messages.Add(encodedMessage);
+            await this.InvokeAsync(() => this.StateHasChanged());
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task Send()
+    {
+        await hubConnection!.SendAsync("SendMessage", userInput, messageInput);
+    }
+}
