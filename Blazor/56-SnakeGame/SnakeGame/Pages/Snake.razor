@@ -1,0 +1,131 @@
+﻿@page "/snake"
+
+<h1>Snake Game</h1>
+
+<div class="game-area" tabindex="0" @onkeydown="HandleKeyPress">
+    @foreach ((int X, int Y) segment in snakeBody)
+    {
+        <div class="snake-segment" style="@($"left: {segment.X * segmentSize}px; top: {segment.Y * segmentSize}px;")"></div>
+    }
+    <div class="food" style="@($"left: {food.X * segmentSize}px; top: {food.Y * segmentSize}px;")"></div>
+</div>
+
+@code {
+    private List<(int X, int Y)> snakeBody = new List<(int X, int Y)> { (10, 10) };
+    private (int X, int Y) food = (5, 5);
+    private int segmentSize = 20;
+    private string currentDirection = "right";
+    private bool isGameRunning = false;
+    private Timer? gameTimer;
+
+    protected sealed override void OnInitialized()
+    {
+        gameTimer = new(GameLoop!, null, Timeout.Infinite, 100);
+        RandomizeFood();
+    }
+
+    private void GameLoop(object state)
+    {
+        (int X, int Y) head = snakeBody.First();
+        (int X, int Y) newHead = head;
+        switch (currentDirection)
+        {
+            case "right":
+                newHead.X++;
+                break;
+            case "left":
+                newHead.X--;
+                break;
+            case "down":
+                newHead.Y++;
+                break;
+            case "up":
+                newHead.Y--;
+                break;
+        }
+
+        if (newHead.X < 0 || newHead.Y < 0 || newHead.X >= 20 || newHead.Y >= 20)
+        {
+            GameOver();
+            return;
+        }
+
+        if (snakeBody.Skip(1).Any(s => s.X == newHead.X && s.Y == newHead.Y))
+        {
+            GameOver();
+            return;
+        }
+
+        if (newHead == food)
+        {
+            snakeBody.Insert(0, newHead);
+            RandomizeFood();
+        }
+        else
+        {
+            snakeBody.Insert(0, newHead);
+            snakeBody.RemoveAt(snakeBody.Count - 1);
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void GameOver()
+    {
+        isGameRunning = false;
+        gameTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+    }
+
+    protected sealed override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StartGame();
+        }
+    }
+
+    public void Dispose()
+    {
+        gameTimer?.Dispose();
+    }
+
+    private void RandomizeFood()
+    {
+        Random rnd = new();
+        food = (rnd.Next(0, 20), rnd.Next(0, 20));
+    }
+
+    private void StartGame()
+    {
+        isGameRunning = true;
+        gameTimer?.Change(0, 100);
+    }
+
+    private void HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (!isGameRunning)
+        {
+            StartGame();
+        }
+
+        switch (e.Key)
+        {
+            case "ArrowUp":
+                if (currentDirection != "down")
+                    currentDirection = "up";
+                break;
+            case "ArrowDown":
+                if (currentDirection != "up")
+                    currentDirection = "down";
+                break;
+            case "ArrowLeft":
+                if (currentDirection != "right")
+                    currentDirection = "left";
+                break;
+            case "ArrowRight":
+                if (currentDirection != "left")
+                    currentDirection = "right";
+                break;
+        }
+    }
+}
