@@ -1,0 +1,71 @@
+﻿@page "/lookup"
+@using global::Lookup.Models
+@inject HttpClient HttpClient
+
+<PageTitle>Lookup</PageTitle>
+
+<h3>Lookup People</h3>
+<p>Try searching for "ya" for instance..</p>
+
+<EditForm OnValidSubmit="OnValidSubmitAsync" Model="FormModel" FormName="LookupForm" Enhance>
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="searchText">Search</label>
+        <InputText id="searchText" @bind-Value="FormModel.SearchText" class="form-control" />
+        <ValidationMessage For="() => FormModel.SearchText" />
+    </div>
+    <button class="btn btn-primary">Search</button>
+</EditForm>
+
+<div class="mt-5">
+    <h3>Results</h3>
+
+    @if (PersonList.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Person person in PersonList)
+                {
+                    <tr>
+                        <td>@person.name</td>
+                        <td>@person.email</td>
+                        <td>@(person.gender!.First().ToString().ToUpper() 
+                            + string.Join("", person.gender!.Skip(1)))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No users found..</p>
+    }
+</div>
+
+@code {
+    public List<Person> PersonList { get; set; } = [];
+    [SupplyParameterFromForm]
+    public SearchModel FormModel { get; set; } = new();
+
+    protected sealed override void OnInitialized()
+    {
+        if (FormModel is not null)
+        {
+            FormModel.SearchText ??= string.Empty;
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        ApiResponse? result = await HttpClient
+            .GetFromJsonAsync<ApiResponse>($"https://gorest.co.in/public/v1/users?name={FormModel.SearchText}");
+        PersonList = result!.data ?? [];
+    }
+}
