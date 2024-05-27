@@ -1,0 +1,1134 @@
+{
+  "CarPoolEvents": [
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210202"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210407"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210413"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210420"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210421"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210422"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210427"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210428"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210503"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210504"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210505"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "MR",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210506"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210510"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "MR",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210511"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210512"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210517"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210519"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "MR",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20210520"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210526"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "MR",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210527"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210531"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210601"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210602"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210603"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210607"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210609"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210610"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210614"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210616"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "MR",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210617"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210621"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210624"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210628"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210629"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210630"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210701"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20210706"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20210707"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210708"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210709"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210816"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210817"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210823"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210824"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210826"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210830"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210831"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "CJ",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210901"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210902"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210906"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210907"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210908"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210913"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210915"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210916"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210920"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210921"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210922"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210923"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210927"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "CJ",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210928"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210929"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20210930"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211001"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211004"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211005"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "CJ",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211006"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211007"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "Guest1",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211011"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211012"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211013"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211014"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211015"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211025"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "CJ",
+          "Roundtrip": true
+        },
+        {
+          "Name": "MR",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20211027"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211028"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "Guest1",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20211029"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "Guest1",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211101"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "MR",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211102"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211103"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211104"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "Guest1",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20211105"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "Guest2",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20211108"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "Guest2",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20211109"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211110"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "CJ",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211111"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211115"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211116"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "CJ",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211117"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": false
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211118"
+    },
+    {
+      "Driver": "CJ",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211122"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211123"
+    },
+    {
+      "Driver": "MR",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        },
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211124"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211125"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211129"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "MR",
+          "Roundtrip": true
+        },
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211130"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211201"
+    },
+    {
+      "Driver": "AC",
+      "Passengers": [
+        {
+          "Name": "JL",
+          "Roundtrip": true
+        }
+      ],
+      "Timestamp": "20211202"
+    },
+    {
+      "Driver": "JL",
+      "Passengers": [
+        {
+          "Name": "AC",
+          "Roundtrip": true
+        },
+        {
+          "Name": "MR",
+          "Roundtrip": false
+        }
+      ],
+      "Timestamp": "20211203"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<PageTitle>Carpool Application</PageTitle>
+
+<div class="text-center mt-3">
+    <h1>Carpool Application</h1>
+
+    <div class="mt-3 mb-3">
+        <button class="btn btn-primary" @onclick="@(() => SetInitialsTo("AC"))">AC</button>
+        <button class="btn btn-primary" @onclick="@(() => SetInitialsTo("JL"))">JL</button>
+        <button class="btn btn-primary" @onclick="@(() => SetInitialsTo("MR"))">MR</button>
+        <button class="btn btn-primary" @onclick="@(() => SetInitialsTo("CJ"))">CJ</button>
+    </div>
+
+    @if (currentDriverInitials == string.Empty)
+    {
+        <p><em>No data...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Driver</th>
+                    <th>Passengers</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (CarpoolEvent carpool in carpools!.CarPoolEvents)
+                {
+                    if (carpool.Driver == currentDriverInitials)
+                    {
+                        <tr>
+                            <td>@carpool.Driver</td>
+                            <td>
+                                @string.Join(", ", carpool.Passengers.Select(p => p.Name))
+                            </td>
+                            <td>@FormatTimestamp(carpool.Timestamp)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private Carpool? carpools;
+    private string currentDriverInitials = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        carpools = await Http.GetFromJsonAsync<Carpool>("data/carpools.json");
+    }
+
+    private void SetInitialsTo(string initials)
+    {
+        currentDriverInitials = initials.ToString();
+    }
+
+    private string FormatTimestamp(string timestamp)
+    {
+        if (DateTime.TryParseExact(timestamp, "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture, 
+            System.Globalization.DateTimeStyles.None, out var dateValue))
+        {
+            return dateValue.ToString("MMMM dd, yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        }
+        else
+        {
+            return "Invalid date";
+        }
+    }
+}
