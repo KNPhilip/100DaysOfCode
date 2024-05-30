@@ -1,0 +1,78 @@
+﻿@page "/person-editor"
+@page "/person-editor/{Id:int}"
+@using BlazorUI.Dtos
+@using Mapster
+@inject HttpClient HttpClient
+
+@if (Id is null)
+{
+    <PageTitle>Add Person</PageTitle>
+
+    <h3>Add a new Person</h3>
+}
+else
+{
+    <PageTitle>Edit "@Person.FullName"</PageTitle>
+    
+    <h3>Edit "@Person.FullName"</h3>
+}
+
+<EditForm Model="Person" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="firstName">First Name</label>
+        <InputText id="firstName" @bind-Value="Person.FirstName" class="form-control" />
+        <ValidationMessage For="() => Person.FirstName" />
+    </div>
+    <div class="mb-2">
+        <label for="lastName">Last Name</label>
+        <InputText id="lastName" @bind-Value="Person.LastName" class="form-control" />
+        <ValidationMessage For="() => Person.LastName" />
+    </div>
+    <div class="mb-2">
+        <label for="birthDate">Birth Date</label>
+        <InputDate id="birthDate" @bind-Value="Person.BirthDate" class="form-control" />
+        <ValidationMessage For="() => Person.BirthDate" />
+    </div>
+    <button class="btn btn-primary">@(Id is null ? "Create" : "Update")</button>
+</EditForm>
+
+<br />
+
+<a href="/people" class="btn btn-secondary">View List</a>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    private Person Person { get; set; } = new();
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            Person = await HttpClient.GetFromJsonAsync<Person>($"api/person/{Id}") ?? new();
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        if (Id is null)
+        {
+            HttpResponseMessage result = await HttpClient
+                .PostAsJsonAsync<Person>("api/person", Person);
+            Person? person = await result.Content.ReadFromJsonAsync<Person>();
+            if (person is not null)
+            {
+                Id = person.Id;
+                Person = person;
+            }
+        }
+        else
+        {
+            HttpResponseMessage result = await HttpClient
+                .PutAsJsonAsync<PersonDto>($"api/person/{Id}", Person.Adapt<PersonDto>());
+            PersonDto? personDto = await result.Content.ReadFromJsonAsync<PersonDto>();
+            Person = personDto.Adapt<Person>() ?? new();
+        }
+    }
+}
