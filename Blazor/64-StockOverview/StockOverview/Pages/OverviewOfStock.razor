@@ -1,0 +1,147 @@
+﻿@page "/stock-overview"
+
+<PageTitle>Stock Overview</PageTitle>
+
+<h3>Stock Overview</h3>
+
+<EditForm Model="FormModel" Context="formContext">
+    <div class="mb-2">
+        <label for="id">Id</label>
+        <InputNumber id="id" @bind-Value="FormModel.Id" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="FormModel.Title" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="FormModel.Description" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="quantity">Quantity</label>
+        <InputNumber id="quantity" @bind-Value="FormModel.Quantity" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label for="missing">Missing item?</label>
+        <InputCheckbox id="missing" @bind-Value="FormModel.Missing" />
+    </div>
+    <button class="btn btn-primary" @onclick="() => AddStockItem(formContext)">Add</button>
+    <button class="btn btn-primary" @onclick="() => EditStockItem(formContext)">Edit</button>
+</EditForm>
+
+<br />
+
+<h3>Items in stock:</h3>
+
+@if (Items is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (StockItem item in Items.Where(x => x.Missing is false))
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>@item.Quantity</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => item.Missing = !item.Missing">Mark as Missing</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br />
+
+<h3>Items not yet in stock:</h3>
+
+@if (Items is not null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (StockItem item in Items.Where(x => x.Missing is true))
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>@item.Quantity</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => item.Missing = !item.Missing">Mark as in Stock</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public List<StockItem> Items { get; set; } = [];
+    public StockItem FormModel { get; set; } = new();
+
+    private void AddStockItem(EditContext context)
+    {
+        if (context.Validate())
+        {
+            Items.Add(FormModel);
+            FormModel = new();
+        }
+    }
+
+    private void EditStockItem(EditContext context)
+    {
+        if (context.Validate())
+        {
+            StockItem? itemToEdit = Items.FirstOrDefault(item => item.Id == FormModel.Id);
+            if (itemToEdit is not null)
+            {
+                itemToEdit.Title = FormModel.Title;
+                itemToEdit.Description = FormModel.Description;
+                itemToEdit.Quantity = FormModel.Quantity;
+                itemToEdit.Missing = FormModel.Missing;
+            }
+        }
+    }
+
+    protected sealed override void OnInitialized()
+    {
+        Items =
+        [
+            new() { Id = 1, Title = "Airpods Pro", Description = "Great for listening to music.", Quantity = 2, Missing = true },
+            new() { Id = 2, Title = "Fanta", Description = "Price winning variant, great taste!", Quantity = 6, Missing = false },
+            new() { Id = 3, Title = "Nike Shoes", Description = "Good running shoes from Nike.", Quantity = 1, Missing = false },
+            new() { Id = 4, Title = "Cigar", Description = "Wanna look cool? Get some cigars.", Quantity = 12, Missing = false },
+            new() { Id = 5, Title = "Paintings", Description = "The boss would like some art.", Quantity = 4, Missing = true },
+            new() { Id = 6, Title = "Table Tennis", Description = "Would be amazing to have in the office.", Quantity = 7, Missing = true }
+        ];
+    }
+
+    public sealed class StockItem
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int Quantity { get; set; }
+        public bool Missing { get; set; }
+    }
+}
