@@ -1,0 +1,79 @@
+﻿@page "/weather"
+@attribute [StreamRendering]
+@inject DataContext DbContext
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (forecasts is null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (forecasts.Count == 0)
+{
+    <p><em>No forecasts...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (WeatherForecast forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                    <td>
+                        <form method="post" data-enhance
+                              @formname="@($"Delete-GameWithId-{forecast.Id}")"
+                              @onsubmit="() => DeleteWeatherForecastByIdAsync(forecast.Id)">
+                            <button class="btn btn-link">
+                                Delete
+                            </button>
+                            <AntiforgeryToken />
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<WeatherForecast>? forecasts;
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await UpdateWeatherForecastsAsync();
+    }
+
+    private async Task DeleteWeatherForecastByIdAsync(int id)
+    {
+        WeatherForecast? forecastToDelete = await DbContext.WeatherForecasts.FindAsync(id);
+        if (forecastToDelete is not null)
+        {
+            DbContext.WeatherForecasts.Remove(forecastToDelete);
+            await DbContext.SaveChangesAsync();
+        }
+
+        await UpdateWeatherForecastsAsync();
+    }
+
+    private async Task UpdateWeatherForecastsAsync()
+    {
+        forecasts = await DbContext.WeatherForecasts.ToListAsync();
+    }
+}

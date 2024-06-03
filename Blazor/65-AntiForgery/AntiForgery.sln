@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiForgery", "AntiForgery\AntiForgery\AntiForgery.csproj", "{A3FF567E-42CB-4E05-8AD2-FF1748919004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiForgery.Client", "AntiForgery\AntiForgery.Client\AntiForgery.Client.csproj", "{7ABA7EEE-23CB-4934-A3D9-9FBB7835270F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3FF567E-42CB-4E05-8AD2-FF1748919004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3FF567E-42CB-4E05-8AD2-FF1748919004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3FF567E-42CB-4E05-8AD2-FF1748919004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3FF567E-42CB-4E05-8AD2-FF1748919004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ABA7EEE-23CB-4934-A3D9-9FBB7835270F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ABA7EEE-23CB-4934-A3D9-9FBB7835270F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ABA7EEE-23CB-4934-A3D9-9FBB7835270F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ABA7EEE-23CB-4934-A3D9-9FBB7835270F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FB098A1-6270-454C-B6FA-A6F7F636F498}
+	EndGlobalSection
+EndGlobal
