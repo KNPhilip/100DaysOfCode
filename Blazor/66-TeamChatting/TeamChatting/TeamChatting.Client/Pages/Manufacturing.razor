@@ -1,0 +1,75 @@
+﻿@page "/manufacturing"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<PageTitle>Manufacturing</PageTitle>
+
+<h3>Manufacturing</h3>
+
+@if (IsConnected)
+{
+    <input type="text" @bind="messageInput" />
+    <button class="btn btn-primary pl-2" @onclick="Send">Send</button>
+
+    <div class="mt-2">
+        @foreach (string message in messages)
+        {
+            if (userInput == message.Split(":")[0])
+            {
+                <div class="mx-3 d-flex justify-content-end">
+                    <p style="background-color: aquamarine; border-radius: 5px; padding: 5px; width: 400px;">@message</p>
+                </div>
+            }
+            else
+            {
+                <div class="mx-3 d-flex justify-content-start">
+                    <p style="background-color: darkgray; border-radius: 5px; padding: 5px; width: 400px;">@message</p>
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    <span>Connecting...</span>
+}
+
+@code {
+    private HubConnection? hubConnection;
+    private List<string> messages = [];
+    private string userInput = string.Empty;
+    private string messageInput = string.Empty;
+
+    private bool IsConnected { get => hubConnection?.State == HubConnectionState.Connected; }
+
+    protected sealed override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userInput = await JSRuntime.InvokeAsync<string>("prompt", "Please enter your name");
+        }
+    }
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/manu-chat"))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
+        {
+            string encodedMessage = $"{user}: {message}";
+            messages.Add(encodedMessage);
+            await this.InvokeAsync(() => this.StateHasChanged());
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task Send()
+    {
+        await hubConnection!.SendAsync("SendMessage", userInput, messageInput);
+    }
+}
