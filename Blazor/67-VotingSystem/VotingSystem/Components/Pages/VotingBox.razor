@@ -1,0 +1,78 @@
+﻿@page "/voting-box"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject IJSRuntime JSRuntime
+@inject DataContext DbContext
+
+<PageTitle>Voting Box</PageTitle>
+
+<h3 class="mb-2">Voting Box</h3>
+
+<div class="d-flex flex-row justify-content-between">
+    <div style="background-color: chartreuse; border-radius: 5px; padding: 15px;">
+        <h3>Bob</h3>
+        <p>Bob is from the party "Green"</p>
+        <button class="btn btn-primary" @onclick="@(() => VoteOnAsync("Bob", "Green"))">Vote</button>
+    </div>
+    <div style="background-color: tomato; border-radius: 5px; padding: 15px;">
+        <h3>Charlie</h3>
+        <p>Charlie is from the party "Red"</p>
+        <button class="btn btn-primary" @onclick="@(() => VoteOnAsync("Charlie", "Red"))">Vote</button>
+    </div>
+    <div style="background-color: aquamarine; border-radius: 5px; padding: 15px;">
+        <h3>Alice</h3>
+        <p>Alice is from the party "Blue"</p>
+        <button class="btn btn-primary" @onclick="@(() => VoteOnAsync("Alice", "Blue"))">Vote</button>
+    </div>
+    <div style="background-color: gold; border-radius: 5px; padding: 15px;">
+        <h3>Thomas</h3>
+        <p>Thomas is from the party "Yellow"</p>
+        <button class="btn btn-primary" @onclick="@(() => VoteOnAsync("Thomas", "Yellow"))">Vote</button>
+    </div>
+    <div style="background-color: darkorchid; border-radius: 5px; padding: 15px;">
+        <h3>Dutch</h3>
+        <p>Dutch is from the party "Purple"</p>
+        <button class="btn btn-primary" @onclick="@(() => VoteOnAsync("Dutch", "Purple"))">Vote</button>
+    </div>
+</div>
+
+@code {
+    public string? Username { get; set; }
+    public List<Vote> Votes { get; set; } = [];
+
+    protected sealed override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Username = await JSRuntime.InvokeAsync<string>("prompt", "Please enter your name");
+        }
+    }
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await UpdateVotesAsync();
+    }
+
+    private async Task VoteOnAsync(string personToVoteOn, string party)
+    {
+        if (await DbContext.Votes.FirstOrDefaultAsync(x => x.Voter == Username) is null)
+        {
+            DbContext.Votes.Add(new()
+            {
+                Voter = Username,
+                VotedOn = personToVoteOn,
+                VotedOnParty = party
+            });
+            await DbContext.SaveChangesAsync();
+            await JSRuntime.InvokeVoidAsync("alert", $"You've successfully voted on \"{personToVoteOn}\" from the party \"{party}\"");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "You have already voted.");
+        }
+    }
+
+    private async Task UpdateVotesAsync()
+    {
+        Votes = await DbContext.Votes.ToListAsync() ?? [];
+    }
+}

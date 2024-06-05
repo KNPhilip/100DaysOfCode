@@ -1,0 +1,47 @@
+﻿@page "/voting-status"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject DataContext DbContext
+
+<PageTitle>Voting Status</PageTitle>
+
+<h3 class="mb-2">Voting Status</h3>
+
+@foreach (VoteDto vote in TopVotes)
+{
+    <div>
+        <h3>@vote.VotedOn</h3>
+        <p>From party "@vote.VotedOnParty"</p>
+        <p>Number of votes: @vote.Count</p>
+    </div>
+}
+
+@code {
+    private List<VoteDto> TopVotes { get; set; } = [];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        await SetTopVotesAsync();
+    }
+
+    private async Task SetTopVotesAsync()
+    {
+        TopVotes = await DbContext.Votes
+            .GroupBy(v => new { v.VotedOn, v.VotedOnParty })
+            .OrderByDescending(g => g.Count())
+            .Take(5)
+            .Select(g => new VoteDto
+            {
+                VotedOn = g.Key.VotedOn,
+                VotedOnParty = g.Key.VotedOnParty,
+                Count = g.Count()
+            })
+            .ToListAsync();
+    }
+
+    private class VoteDto
+    {
+        public string? VotedOn { get; set; }
+        public string? VotedOnParty { get; set; }
+        public int Count { get; set; }
+    }
+}
