@@ -1,0 +1,14 @@
+﻿@page "/counter"
+@inject IStringLocalizer<Resource> Localizer
+
+<PageTitle>@Localizer["Counter"]</PageTitle>
+
+<h1>@Localizer["Counter"]</h1>
+
+<p role="status">@Localizer["Current count"]: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="() => currentCount++">@Localizer["Click me"]</button>
+
+@code {
+    private int currentCount = 0;
+}

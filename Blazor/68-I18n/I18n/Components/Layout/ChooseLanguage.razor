@@ -1,0 +1,37 @@
+﻿@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+@inject IStringLocalizer<Resource> localizer
+
+<div>
+    <select @bind="Culture">
+        <option value="en-US">English</option>
+        <option value="de-CH">Deutsche</option>
+    </select>
+</div>
+
+@code
+{
+    protected sealed override void OnInitialized()
+    {
+        Culture = CultureInfo.CurrentCulture;
+    }
+
+    private CultureInfo Culture
+    {
+        get
+        {
+            return CultureInfo.CurrentCulture;
+        }
+        set
+        {
+            if (CultureInfo.CurrentCulture != value)
+            {
+                string uri = new Uri(NavigationManager.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+                string cultureEscaped = Uri.EscapeDataString(value.Name);
+                string uriEscaped = Uri.EscapeDataString(uri);
+
+                NavigationManager.NavigateTo($"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}", forceLoad: true);
+            }
+        }
+    }
+}
