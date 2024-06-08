@@ -1,0 +1,20 @@
+﻿@page "/counter"
+@using ComponentLibrary.Enums
+@using ComponentLibrary.LibUtils
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<LibButton Text="Click me" AddMarginTop OnClick="IncrementCount" />
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

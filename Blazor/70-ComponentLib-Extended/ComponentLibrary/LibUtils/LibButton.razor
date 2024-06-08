@@ -1,0 +1,39 @@
+﻿<button type="@Type" @onclick="OnClick" style="@Css">
+    @Text
+</button>
+
+@code {
+    private const string PrimaryCss = "background-color: aquamarine;";
+    private const string SecondaryCss = "background-color: coral;";
+    private const string DangerCss = "background-color: fireback;";
+    private const string MarginTopCss = "margin-top: 5px;";
+
+    [Parameter]
+    public string? Type { get; set; } = "submit";
+    [Parameter]
+    public string? Text { get; set; } = string.Empty;
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+    [Parameter]
+    public bool AddMarginTop { get; set; } = false;
+    [Parameter]
+    public ButtonLevel Level { get; set; } = ButtonLevel.Primary;
+
+    private string Css { get; set; } = string.Empty;
+
+    protected sealed override void OnParametersSet()
+    {
+        Css = Level switch
+        {
+            ButtonLevel.Primary => PrimaryCss,
+            ButtonLevel.Secondary => SecondaryCss,
+            ButtonLevel.Danger => DangerCss,
+            _ => PrimaryCss
+        };
+
+        if (AddMarginTop)
+        {
+            Css += $" {MarginTopCss}";
+        };
+    }
+}
