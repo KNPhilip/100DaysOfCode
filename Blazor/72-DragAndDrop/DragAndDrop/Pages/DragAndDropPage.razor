@@ -1,0 +1,26 @@
+﻿@page "/drag-and-drop"
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Drag and Drop</PageTitle>
+
+<h3>Drag And Drop</h3>
+
+<div draggable="true">
+    <div class="html5">HTML5</div>
+</div>
+
+<div class="main" width="500px" height="500px">
+    <div class="draggable">Draggable Element</div>
+    <div class="dropzone">Dropzone</div>
+</div>
+
+@code {
+    protected sealed override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender is true)
+        {
+            await JSRuntime.InvokeVoidAsync("dragAndDrop", ".draggable");
+            await JSRuntime.InvokeVoidAsync("dropZone", ".dropzone");
+        }
+    }
+}
