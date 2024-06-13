@@ -1,0 +1,27 @@
+﻿<section>
+    <h3>Child</h3>
+
+    <div @attributes="AllAttributes" somestring="child value">
+        <p>@AllAttributes["somestring"]</p>
+    </div>
+
+    <div somestring="child value" @attributes="AllAttributes">
+        <p>@AllAttributes["somestring"]</p>
+    </div>
+</section>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AllAttributes { get; set; } = new()
+    {
+        { "somestring", "default value" },
+        { "someint", 1 },
+        { "somebool", true },
+        { "somestring2", "default value" },
+        { "someint2", 2 },
+        { "somebool2", false },
+        { "somestring3", "default value" },
+        { "someint3", 3 },
+        { "somebool3", true },
+    };
+}
