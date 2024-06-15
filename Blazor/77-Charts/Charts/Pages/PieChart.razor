@@ -1,0 +1,49 @@
+﻿@page "/pie-chart"
+
+<PageTitle>Pie Chart</PageTitle>
+
+<h3>Pie Chart</h3>
+
+<Chart Config="_pieConfig"></Chart>
+
+@code {
+    private PieConfig? _pieConfig;
+
+    protected sealed override void OnInitialized()
+    {
+        ConfigurePieConfig();
+    }
+
+    private void ConfigurePieConfig()
+    {
+        _pieConfig = new();
+        _pieConfig.Options = new()
+        {
+            Responsive = true,
+            Title = new()
+            {
+                Text = "Most used Agile Methodologies"
+            }
+        };
+
+        foreach (string methodology in new[] { "XP", "Scrum", "Spiral", "Kanban", "Scrumban", "Crystal" })
+        {
+            _pieConfig.Data.Labels.Add(methodology);
+        }
+
+        PieDataset<int> dataset = new(new[] { 17, 38, 7, 22, 6, 10 })
+        {
+            BackgroundColor = new[]
+            {
+                ColorUtil.ColorHexString(255, 0, 0),
+                ColorUtil.ColorHexString(0, 255, 0),
+                ColorUtil.ColorHexString(0, 0, 255),
+                ColorUtil.ColorHexString(255, 165, 0),
+                ColorUtil.ColorHexString(128, 0, 128),
+                ColorUtil.ColorHexString(0, 255, 255)
+        }
+        };
+
+        _pieConfig.Data.Datasets.Add(dataset);
+    }
+}
