@@ -1,0 +1,198 @@
+﻿@page "/race"
+@page "/race/{firstSnailName}"
+@page "/race/{firstSnailName}/{secondSnailName}"
+@page "/race/{firstSnailName}/{secondSnailName}/{thirdSnailName}"
+@page "/race/{firstSnailName}/{secondSnailName}/{thirdSnailName}/{fourthSnailName}"
+@inject NavigationManager NavigationManager
+
+<header id="top">@topText</header>
+<div id="wrapper">
+    <div class="finish"></div>
+    <div id="raceway">
+        @foreach (Snail snail in Snails)
+        {
+            <div id="@snail.Id" class="snail-container" style="background-image: @snail.ImageUrl; left: @(snail.Left)vw; top: @(snail.Top)vh">
+                <p>@snail.Name<br />@snail.RacesWon</p>
+            </div>
+        }
+    </div>
+    <div class="buttons" style="display: @showButtons">
+        <div class="startbutton" id="startbutton" @onclick="StartRaceAsync">@startButtonText</div>
+        <div class="startbutton" id="startbutton" @onclick="EndRace">END</div>
+    </div>
+</div>
+
+<div id="modal-container" class="modal" style="display: @showModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="close" @onclick="@(() => showModal = "none")">&times;</span>
+            <h2>Winner found!</h2>
+        </div>
+        <div class="modal-body">
+            <p id="winnertext">@winnerText</p>
+            <img id="winnerimg" src="@winnerImageSrc">
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? firstSnailName { get; set; }
+    [Parameter]
+    public string? secondSnailName { get; set; }
+    [Parameter]
+    public string? thirdSnailName { get; set; }
+    [Parameter]
+    public string? fourthSnailName { get; set; }
+
+    private List<Snail> Snails { get; set; } = [];
+    private int? currentTimeRecord;
+    private int currentTopRaces = 0;
+    private int currentRaceTime = 0;
+    private int finishLine = 38;
+
+    private string showModal = "none";
+    private string showButtons = "block";
+    private string startButtonText = "START";
+
+    private string winnerImageSrc = string.Empty;
+    private string winnerText = string.Empty;
+    private string topText = string.Empty;
+
+    protected sealed override void OnParametersSet()
+    {
+        if (firstSnailName is null || secondSnailName is null)
+        {
+            EndRace();
+        }
+
+        Snails.Add(new()
+            {
+                Id = 1,
+                Name = firstSnailName,
+                ImageUrl = "url('img/snail1.png')",
+                Top = -20,
+                Left = -34
+            });
+
+        Snails.Add(new()
+            {
+                Id = 2,
+                Name = secondSnailName,
+                ImageUrl = "url('img/snail2.png')",
+                Top = -7,
+                Left = -34
+            });
+
+        if (thirdSnailName is not null)
+        {
+            Snails.Add(new()
+                {
+                    Id = 3,
+                    Name = thirdSnailName,
+                    ImageUrl = "url('img/snail3.png')",
+                    Top = 6,
+                    Left = -34
+                });
+        }
+
+        if (fourthSnailName is not null)
+        {
+            Snails.Add(new()
+                {
+                    Id = 4,
+                    Name = fourthSnailName,
+                    ImageUrl = "url('img/snail4.png')",
+                    Top = 19,
+                    Left = -34
+                });
+        }
+    }
+
+    private async Task StartRaceAsync()
+    {
+        showButtons = "none";
+        showModal = "none";
+        startButtonText = "REMATCH";
+
+        for (int i = 0; i < Snails.Count; i++)
+        {
+            Snail currentSnail = Snails.Find(x => x.Id == i + 1)
+                ?? throw new Exception("Something went wrong..");
+
+            Random random = new();
+            currentSnail.Left += (Math.Round((random.NextDouble() * 2) + 5) / Math.Round((random.NextDouble() * 14) + 5));
+
+            StateHasChanged();
+
+            if (currentSnail.Left >= finishLine)
+            {
+                currentSnail.RacesWon += 1;
+                await Task.Delay(100);
+                GameOver($"{currentSnail.Name}", currentSnail.Id, $"img/snail{i + 1}-winner.png");
+                break;
+            }
+            else if (i + 1 == Snails.Count)
+            {
+                await Task.Delay(100);
+                currentRaceTime += 1;
+                await StartRaceAsync();
+            }
+        }
+    }
+
+    private void GameOver(string fastestSnail, int fastestSnailId, string snailImage)
+    {
+        currentRaceTime = (currentRaceTime * 100) / 1000;
+        showButtons = "block";
+        showModal = "block";
+
+        winnerText = $"The race is over and {fastestSnail} won the race in {currentRaceTime} seconds!";
+        winnerImageSrc = $"img/snail{fastestSnailId}-winner.png";
+
+        if (currentRaceTime < currentTimeRecord || currentTimeRecord is null)
+        {
+            currentTimeRecord = currentRaceTime;
+            topText = $"Fastest time is set by {fastestSnail} with a time of {currentRaceTime} seconds.";
+        }
+
+        for (int i = 0; i < Snails.Count; i++)
+        {
+            Snail currentSnail = Snails.Find(x => x.Id == i + 1)
+                ?? throw new Exception("Something went wrong..");
+            currentSnail.Left = -34;
+            if (currentSnail.Name == fastestSnail && currentSnail.RacesWon > currentTopRaces)
+            {
+                currentTopRaces += 1;
+                currentSnail.ImageUrl = $"url('img/snail{currentSnail.Id}-crown.png')";
+            }
+        }
+
+        for (int i = 0; i < Snails.Count; i++)
+        {
+            Snail currentSnail = Snails.Find(x => x.Id == i + 1)
+                ?? throw new Exception("Something went wrong..");
+            if (currentSnail.RacesWon != currentTopRaces)
+            {
+                currentSnail.ImageUrl = $"url('img/snail{currentSnail.Id}.png')";
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private void EndRace()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private sealed class Snail
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? ImageUrl { get; set; }
+        public int RacesWon { get; set; } = 0;
+        public double Top { get; set; }
+        public double Left { get; set; }
+    }
+}

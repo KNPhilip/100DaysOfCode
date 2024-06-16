@@ -1,0 +1,136 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Home</PageTitle>
+
+<div class="container-md align-items-center bg-darkgreen">
+    <main class="d-flex flex-column align-items-center mt-5 mb-5 index-main">
+        <h1>Snail race</h1>
+        <br /> <br />
+        <h2>Who is participating in the race?</h2>
+        <br />
+        <form>
+            <div class="d-flex flex-column flex-lg-row align-items-center align-items-lg-left">
+                <div>
+                    <h4 class="text-center">Snail 1:</h4>
+                    <section class="d-flex flex-column flex-lg-row">
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Active:</p>
+                            <input type="checkbox" checked="true" disabled />
+                        </div>
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Name:</p>
+                            <input name="firstSnail" @bind-value="firstSnailName" />
+                        </div>
+                    </section>
+                </div>
+                <img class="indeximg" src="img/snail1.png" />
+            </div>
+            <br /> <br />
+
+            <div class="d-flex flex-column flex-lg-row align-items-center align-items-lg-left">
+                <div>
+                    <h4 class="text-center">Snail 2:</h4>
+                    <section class="d-flex flex-column flex-lg-row">
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Active:</p>
+                            <input type="checkbox" checked="true" disabled />
+                        </div>
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Name:</p>
+                            <input name="secondSnail" @bind-value="secondSnailName" />
+                        </div>
+                    </section>
+                </div>
+                <img class="indeximg" src="img/snail2.png" />
+            </div>
+            <br /> <br />
+
+            <div class="d-flex flex-column flex-lg-row align-items-center align-items-lg-left">
+                <div>
+                    <h4 class="text-center">Snail 3:</h4>
+                    <section class="d-flex flex-column flex-lg-row">
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Active:</p>
+                            <input id="thirdCheckBox" type="checkbox" @bind-value="isThirdSelected" />
+                        </div>
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Name:</p>
+                            @if (isThirdSelected)
+                            {
+                                <input id="thirdSnail" name="thirdSnail" @bind-value="thirdSnailName" />
+                            }
+                            else
+                            {
+                                <input id="thirdSnail" name="thirdSnail" @bind-value="thirdSnailName" disabled />
+                            }
+                        </div>
+                    </section>
+                </div>
+                <img class="indeximg" src="img/snail3.png" />
+            </div>
+            <br /> <br />
+
+            <div class="d-flex flex-column flex-lg-row align-items-center align-items-lg-left">
+                <div>
+                    <h4 class="text-center"> Snail 4:</h4>
+                    <section class="d-flex flex-column flex-lg-row">
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Active:</p>
+                            @if (isThirdSelected)
+                            {
+                                <input id="fourthCheckBox" type="checkbox" @bind-value="isFourthSelected" />
+                            }
+                            else
+                            {
+                                <input id="fourthCheckBox" type="checkbox" disabled />
+                            }
+                        </div>
+                        <div class="d-flex flex-row">
+                            <p class="m-2">Name:</p>
+                            @if (isFourthSelected)
+                            {
+                                <input id="fourthSnail" name="fourthSnail" @bind-value="fourthSnailName" />
+                            }
+                            else
+                            {
+                                <input id="fourthSnail" name="fourthSnail" @bind-value="fourthSnailName" disabled />
+                            }
+                        </div>
+                    </section>
+                </div>
+                <img class="indeximg" src="img/snail4.png" />
+            </div>
+            <br /> <br />
+            <div class="text-center text-lg-left">
+                <input class="button mb-5 align-items-center" @onclick="OnButtonClicked" value="Start Race" />
+            </div>
+        </form>
+    </main>
+</div>
+
+@code {
+    private string firstSnailName = "Philip";
+    private string secondSnailName = "Kenneth";
+    private string thirdSnailName = "Jonas";
+    private string fourthSnailName = "Jesper";
+
+    private bool isThirdSelected = false;
+    private bool isFourthSelected = false;
+
+    private void OnButtonClicked()
+    {
+        if (isFourthSelected)
+        {
+            NavigationManager.NavigateTo($"/race/{firstSnailName}/{secondSnailName}/{thirdSnailName}/{fourthSnailName}");
+        }
+        else if (isThirdSelected)
+        {
+            NavigationManager.NavigateTo($"/race/{firstSnailName}/{secondSnailName}/{thirdSnailName}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/race/{firstSnailName}/{secondSnailName}");
+        }
+    }
+}
