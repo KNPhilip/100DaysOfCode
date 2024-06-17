@@ -1,0 +1,82 @@
+﻿@page "/translator"
+@inject HttpClient HttpClient
+
+<h3>PokeTranslator - Enter Pokemon name</h3>
+
+<EditForm Model="FormModel" OnValidSubmit="OnValidSubmitAsync" FormName="PokeTranslatorForm" Enhance>
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="text"></label>
+        <InputText id="text" @bind-Value="FormModel.Text" class="form-control" />
+        <ValidationMessage For="() => FormModel.Text" />
+    </div>
+    <button class="btn btn-primary">Translate</button>
+</EditForm>
+
+<br />
+
+<p>@translatedText</p>
+
+@code {
+    private string? translatedText = string.Empty;
+    [SupplyParameterFromForm]
+    public TranslateModel FormModel { get; set; } = new();
+
+    private async Task OnValidSubmitAsync()
+    {
+        HttpResponseMessage pokemonResponse = await HttpClient
+            .GetAsync($"https://pokeapi.co/api/v2/pokemon-species/{FormModel.Text}");
+
+        if (!pokemonResponse.IsSuccessStatusCode)
+        {
+            translatedText = "Pokemon not found";
+            return;
+        }
+
+        PokemonRoot? pokemonContent = await pokemonResponse.Content
+            .ReadFromJsonAsync<PokemonRoot>();
+
+        FlavorTextEntry? flavorTextEntry = pokemonContent?.flavor_text_entries!
+            .FirstOrDefault(entry => entry.language!.name == "en");
+
+        if (flavorTextEntry is not null)
+        {
+            Dictionary<string, string> formDataDictionary = new()
+            {
+                { "text", flavorTextEntry.flavor_text!.Replace("\n", " ").Replace("\f", " ") }
+            };
+
+            HttpResponseMessage shakespearResponse = await HttpClient
+                .PostAsync("https://api.funtranslations.com/translate/shakespeare.json", new FormUrlEncodedContent(formDataDictionary));
+
+            ShakespearRoot? shakespearContent = await shakespearResponse.Content
+                .ReadFromJsonAsync<ShakespearRoot>();
+
+            if (shakespearResponse.IsSuccessStatusCode && shakespearContent?.success!.total > 0)
+            {
+                translatedText =
+                    $"Congratulations! You got an available response in english from your input \"{FormModel.Text}\"! " +
+                    $"Here's a description of your pokemon - {flavorTextEntry.flavor_text} " +
+                    $"Ah! You're a fan of shakespear I heard? Well, another way of describing would be: {shakespearContent?.contents!.translated}";
+            }
+            else if (shakespearContent!.error!.code == 429)             
+            {
+                translatedText = 
+                    "You've exceeded the rate limit for the Shakespeare API. " +
+                    "Please try again later.";
+            }
+            else
+            {
+                translatedText = "Something went wrong calling the APIs..";
+            }
+        }
+    }
+
+    protected sealed override void OnParametersSet()
+    {
+        if (FormModel is not null)
+        {
+            FormModel.Text ??= string.Empty;
+        }
+    }
+}
