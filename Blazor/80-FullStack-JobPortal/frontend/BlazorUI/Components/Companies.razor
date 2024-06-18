@@ -1,0 +1,62 @@
+﻿@page "/companies"
+@inject HttpClient HttpClient
+@inject ILocalStorageService LocalStorageService
+
+<PageTitle>Companies</PageTitle>
+
+<h3>Companies</h3>
+
+@if (CompanyList is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Industry</th>
+                <th>Location</th>
+                <th>Number of Employees</th>
+                @if (isAutenticated)
+                {
+                    <th></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CompanyDto company in CompanyList)
+            {
+                <tr>
+                    <td>@company.Name</td>
+                    <td>@company.Description</td>
+                    <td>@company.Industry</td>
+                    <td>@company.Location</td>
+                    <td>@company.EmployeeNumber</td>
+                    @if (isAutenticated)
+                    {
+                        <td><a href="/company-editor/@company.Id" class="btn btn-primary">Edit</a></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (isAutenticated)
+{
+    <td><a href="/company-editor" class="btn btn-primary mt-2">Add Company</a></td>
+}
+
+@code {
+    public List<CompanyDto> CompanyList = [];
+    private bool isAutenticated;
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        CompanyList = await HttpClient.GetFromJsonAsync<List<CompanyDto>>("/api/companyv1") ?? [];
+        isAutenticated = !string.IsNullOrEmpty(await LocalStorageService.GetItemAsync<string>("jwt"));
+    }
+}

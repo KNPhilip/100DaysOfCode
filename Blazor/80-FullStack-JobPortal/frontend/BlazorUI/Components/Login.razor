@@ -1,0 +1,38 @@
+﻿@page "/login"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorageService
+
+<PageTitle>Login</PageTitle>
+
+<h3>Login</h3>
+
+<EditForm FormName="LoginForm" Model="LoginModel" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="email">Email address</label>
+        <InputText id="email" @bind-Value="LoginModel.Email" class="form-control" />
+        <ValidationMessage For="@(() => LoginModel.Email)" />
+    </div>
+    <div class="mb-2">
+        <label for="password">Password</label>
+        <InputText type="password" id="password" @bind-Value="LoginModel.Password" class="form-control" />
+        <ValidationMessage For="@(() => LoginModel.Password)" />
+    </div>
+    <button class="btn btn-primary">Login</button>
+</EditForm>
+
+@code {
+    private LoginDto LoginModel = new();
+
+    private async Task OnValidSubmitAsync()
+    {
+        HttpResponseMessage response = await Http.PostAsJsonAsync("api/authv1/login", LoginModel);
+        string jwt = await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(jwt))
+        {
+            await LocalStorageService.SetItemAsync("jwt", jwt);
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

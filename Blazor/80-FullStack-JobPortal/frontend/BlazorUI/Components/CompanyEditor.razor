@@ -1,0 +1,116 @@
+﻿@page "/company-editor"
+@page "/company-editor/{Id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorageService
+
+@if (Id is null)
+{
+    <PageTitle>Add Company</PageTitle>
+    <h3>Add Company</h3>
+}
+else
+{
+    <PageTitle>Edit "@Company!.Name"</PageTitle>
+    <h3>Edit "@Company!.Name"</h3>
+}
+
+<EditForm FormName="CompanyEditorForm" Model="Company" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="name">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="Company!.Name" />
+        <ValidationMessage For="(() => Company!.Name)" />
+    </div>
+    <div class="mb-2">
+        <label for="description">Description</label>
+        <InputText id="description" class="form-control" @bind-Value="Company!.Description" />
+        <ValidationMessage For="(() => Company!.Description)" />
+    </div>
+    <div class="mb-2">
+        <label for="industry">Industry</label>
+        <InputText id="industry" class="form-control" @bind-Value="Company!.Industry" />
+        <ValidationMessage For="(() => Company!.Industry)" />
+    </div>
+    <div class="mb-2">
+        <label for="location">Location</label>
+        <InputText id="location" class="form-control" @bind-Value="Company!.Location" />
+        <ValidationMessage For="(() => Company!.Location)" />
+    </div>
+    <div class="mb-2">
+        <label for="employeeNumber">Number of Employees</label>
+        <InputNumber id="employeeNumber" class="form-control" @bind-Value="Company!.EmployeeNumber" />
+        <ValidationMessage For="(() => Company!.EmployeeNumber)" />
+    </div>
+    <button class="btn btn-primary">@(Id is null ? "Add Company" : "Edit Company")</button>
+</EditForm>
+
+@if (Id is not null)
+{
+    <button class="btn btn-danger mt-1" @onclick="DeleteCompanyAsync">Delete Company</button>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    public CompanyDto? Company { get; set; } = new();
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            Company = await Http.GetFromJsonAsync<CompanyDto>($"/api/companyv1/{Id}")!;
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        string? jwt = await LocalStorageService.GetItemAsStringAsync("jwt");
+
+        if (Id is null)
+        {
+            Http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", jwt);
+
+            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/companyv1", Company);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/companies");
+            }
+            else
+            {
+                await LocalStorageService.RemoveItemAsync("jwt");
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        else
+        {
+            Http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", jwt);
+
+            HttpResponseMessage response = await Http.PutAsJsonAsync($"/api/companyv1/{Id}", Company);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/companies");
+            }
+            else
+            {
+                await LocalStorageService.RemoveItemAsync("jwt");
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    private async Task DeleteCompanyAsync()
+    {
+        string? jwt = await LocalStorageService.GetItemAsStringAsync("jwt");
+
+        Http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", jwt);
+
+        await Http.DeleteAsync($"/api/companyv1/{Id}");
+        NavigationManager.NavigateTo("/companies");
+    }
+}

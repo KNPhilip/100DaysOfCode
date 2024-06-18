@@ -1,0 +1,51 @@
+﻿@page "/jobposts"
+@inject HttpClient HttpClient
+@inject ILocalStorageService LocalStorageService
+
+<PageTitle>Job Posts</PageTitle>
+
+<h3>Job Posts</h3>
+
+@if (jobPostList is null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (jobPostList.Count == 0)
+{
+    <p><em>No job posts found.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Skills</th>
+                <th>Company</th>
+                <th>Hiring Manager</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (JobPostDto jobPost in jobPostList)
+            {
+                <tr>
+                    <td>@jobPost.Title</td>
+                    <td>@jobPost.Description</td>
+                    <td>@(string.Join(", ", jobPost.Skills!) + ",")</td>
+                    <td>@jobPost.Company!.Name</td>
+                    <td>@jobPost.HiringManager!.FullName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public List<JobPostDto>? jobPostList;
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        jobPostList = await HttpClient.GetFromJsonAsync<List<JobPostDto>>("/api/jobpostv1") ?? [];
+    }
+}

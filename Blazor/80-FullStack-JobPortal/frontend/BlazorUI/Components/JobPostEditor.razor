@@ -1,0 +1,124 @@
+﻿@* @page "/jobpost-editor"
+@page "/jobpost-editor/{Id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorageService
+
+@if (Id is null)
+{
+    <PageTitle>Create Job Post</PageTitle>
+    <h3>Create Job Post</h3>
+}
+else
+{
+    <PageTitle>Edit Job Post</PageTitle>
+    <h3>Edit "@JobPost!.Title"</h3>
+}
+
+<EditForm FormName="JobPostEditorForm" Model="JobPost" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="title">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="JobPost!.Title" />
+        <ValidationMessage For="(() => JobPost!.Title)" />
+    </div>
+    <div class="mb-2">
+        <label for="description">Description</label>
+        <InputText id="description" class="form-control" @bind-Value="JobPost!.Description" />
+        <ValidationMessage For="(() => JobPost!.Description)" />
+    </div>
+    <div class="mb-2">
+        <label for="company">Company</label>
+        <InputSelect id="company" @bind-Value="JobPost.CompanyId" class="form-control">
+            @foreach (CompanyDto company in CompanyList)
+            {
+                <option value="@company.Id.ToString()">@company.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="mb-2">
+        <label for="hiringManager">Hiring Manager</label>
+        <InputSelect id="hiringManager" @bind-Value="JobPost.HiringManagerId" class="form-control">
+            @foreach (UserDto user in UserList)
+            {
+                <option value="@user.Id.ToString()">@user.FullName</option>
+            }
+        </InputSelect>
+    </div>
+    <button class="btn btn-primary">@(Id is null ? "Create Job Post" : "Edit Job Post")</button>
+</EditForm>
+
+@if (Id is not null)
+{
+    <button class="btn btn-danger mt-1" @onclick="DeleteJobPostAsync">Delete Job Post</button>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    public JobPostDto? JobPost { get; set; } = new();
+    private List<CompanyDto> CompanyList = [];
+    private List<UserDto> UserList = [];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        CompanyList = await Http.GetFromJsonAsync<List<CompanyDto>>($"/api/companyv1") ?? [];
+        UserList = await Http.GetFromJsonAsync<List<UserDto>>($"/api/userv1") ?? [];
+        if (Id.HasValue)
+        {
+            JobPost = await Http.GetFromJsonAsync<JobPostDto>($"/api/jobpostv1/{Id}")!;
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        string? jwt = await LocalStorageService.GetItemAsStringAsync("jwt");
+
+        if (Id is null)
+        {
+            Http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", jwt);
+
+            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/jobpostv1", JobPost);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/jobposts");
+            }
+            else
+            {
+                await LocalStorageService.RemoveItemAsync("jwt");
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        else
+        {
+            Http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", jwt);
+
+            HttpResponseMessage response = await Http.PutAsJsonAsync($"/api/jobpostv1/{Id}", JobPost);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/jobposts");
+            }
+            else
+            {
+                await LocalStorageService.RemoveItemAsync("jwt");
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+    }
+
+    private async Task DeleteJobPostAsync()
+    {
+        string? jwt = await LocalStorageService.GetItemAsStringAsync("jwt");
+
+        Http.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", jwt);
+
+        await Http.DeleteAsync($"/api/jobpostv1/{Id}");
+        NavigationManager.NavigateTo("/jobposts");
+    }
+}
+ *@

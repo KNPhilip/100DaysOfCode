@@ -1,0 +1,47 @@
+﻿@page "/register"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Register</PageTitle>
+
+<h3>Register</h3>
+
+<EditForm FormName="RegisterForm" Model="RegisterModel" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <div class="mb-2">
+        <label for="firstName">First name</label>
+        <InputText id="firstName" @bind-Value="RegisterModel.FirstName" class="form-control" />
+        <ValidationMessage For="@(() => RegisterModel.FirstName)" />
+    </div>
+    <div class="mb-2">
+        <label for="lastName">Last name</label>
+        <InputText id="lastName" @bind-Value="RegisterModel.LastName" class="form-control" />
+        <ValidationMessage For="@(() => RegisterModel.LastName)" />
+    </div>
+    <div class="mb-2">
+        <label for="email">Email address</label>
+        <InputText id="email" @bind-Value="RegisterModel.Email" class="form-control" />
+        <ValidationMessage For="@(() => RegisterModel.Email)" />
+    </div>
+    <div class="mb-2">
+        <label for="password">Password</label>
+        <InputText type="password" id="password" @bind-Value="RegisterModel.Password" class="form-control" />
+        <ValidationMessage For="@(() => RegisterModel.Password)" />
+    </div>
+    <button class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    private RegisterDto RegisterModel = new();
+
+    private async Task OnValidSubmitAsync()
+    {
+        HttpResponseMessage response = await Http.PostAsJsonAsync("api/authv1/register", RegisterModel);
+        if (!response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+        NavigationManager.NavigateTo("/login");
+    }
+}
