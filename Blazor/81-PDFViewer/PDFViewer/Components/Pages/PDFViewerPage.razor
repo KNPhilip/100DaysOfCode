@@ -1,0 +1,61 @@
+﻿@page "/pdf-viewer"
+@inject NavigationManager NavigationManager
+@inject IFileService FileService
+@inject IFileUpload FileUpload
+
+<PageTitle>PDF Viewer</PageTitle>
+
+<h3>PDF Viewer</h3>
+
+<InputFile OnChange="HandleFileSelectedAsync" class="form-control" />
+
+<table class="table table-bordered" style="margin-top: 10px;">
+    <thead>
+        <tr>
+            <th>SL</th>
+            <th>PDF Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (fileClass.Files is not null && fileClass.Files.Count > 0)
+        {
+            @foreach (FileClass file in fileClass.Files)
+            {
+                <tr>
+                    <td>@file.FileId</td>
+                    <td>@file.Name</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => ShowOnNewTab(file.FileId)">Show PDF</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    public FileClass fileClass = new();
+    List<IBrowserFile> files = [];
+
+    private async Task HandleFileSelectedAsync(InputFileChangeEventArgs e)
+    {
+        files = [];
+        foreach (IBrowserFile file in e.GetMultipleFiles(1))
+        {
+            if (file is not null)
+            {
+                await FileUpload.UploadAsync(file);
+                files.Add(file);
+            }
+        }
+        fileClass.Files = FileService.GetAllPdfs();
+    }
+
+    private void ShowOnNewTab(int fileId)
+    {
+        string pdfName = fileClass.Files.SingleOrDefault(x => x.FileId == fileId)!.Name
+            ?? throw new Exception("Something went wrong..");
+        NavigationManager.NavigateTo($"/files/{pdfName}");
+    }
+}
