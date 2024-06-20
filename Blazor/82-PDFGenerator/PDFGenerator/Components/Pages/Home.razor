@@ -1,0 +1,111 @@
+﻿@page "/"
+@inject IStudentService StudentService
+@inject IJSRuntime JSRuntime
+
+<div class="row">
+    <div class="col-md-4 hideWhenPrint">
+        <button class="btn btn-danger" @onclick="Print" style="margin-bottom:10px;">Print</button>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Student Id</th>
+                    <th>Name</th>
+                    <th>Roll</th>
+                    <th>Section</th>
+                    <th>Group</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stu in studentList)
+                {
+                    <tr>
+                        <td>@stu.StudentId</td>
+                        <td>@stu.Name</td>
+                        <td>@stu.Roll</td>
+                        <td>@stu.Section</td>
+                        <td>@stu.Group</td>
+                        <td>
+                            <button @onclick="@(e => GetStudentDetail(stu.StudentId))" class="btn btn-primary">D</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-8">
+        <div class="col-md-12" style="text-align:center;">
+            <h1>Student Basic Information</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2" style="text-align:right;">
+            <label>Name:</label>
+        </div>
+        <div class="col-md-10" style="text-align:right;">
+            <label>@student.Name</label>
+        </div>
+        <div class="col-md-2" style="text-align:right;">
+            <label>Roll:</label>
+        </div>
+        <div class="col-md-10" style="text-align:right;">
+            <label>@student.Roll</label>
+        </div>
+        <div class="col-md-2" style="text-align:right;">
+            <label>Section:</label>
+        </div>
+        <div class="col-md-10" style="text-align:right;">
+            <label>@student.Section</label>
+        </div>
+        <div class="col-md-2" style="text-align:right;">
+            <label>Group:</label>
+        </div>
+        <div class="col-md-10" style="text-align:right;">
+            <label>@student.Group</label>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="text-align:center;">
+                <h1>Student Mark Sheets</h1>
+            </div>
+        </div>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Mark</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (MarkSheet mrk in student.MarkSheets)
+                {
+                    <tr>
+                        <td>@mrk.Subject</td>
+                        <td>@mrk.Mark</td>
+                        <td>@mrk.Grade</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    List<Student> studentList = [];
+    Student student = new();
+
+    protected sealed override void OnInitialized()
+    {
+        studentList = StudentService.GetStudents();
+    }
+
+    private void GetStudentDetail(int studentId)
+    {
+        student = StudentService.GetStudent(studentId);
+    }
+
+    private void Print()
+    {
+        JSRuntime.InvokeVoidAsync("Print");
+    }
+}
