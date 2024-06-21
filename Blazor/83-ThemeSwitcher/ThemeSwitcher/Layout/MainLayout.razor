@@ -1,0 +1,55 @@
+﻿@inherits LayoutComponentBase
+@inject ILocalStorageService LocalStorageService
+
+<div class="page @GetCssClass()">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 d-flex justify-content-between">
+            <div class="d-flex flex-row">
+                <p class="mt-3">Theme</p>
+                <select style="margin-left: 1rem; width: 100px; margin: 8px;" @onchange="ChangeThemeAsync" class="form-control">
+                    @foreach (string theme in themes)
+                    {
+                        <option value="@theme" selected="@IsSelectedTheme(theme)">@theme</option>
+                    }
+                </select>
+            </div>
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private string selectedTheme = "Light";
+    private List<string> themes = [ "Light", "Dark" ];
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        string? localStorageTheme = await LocalStorageService
+            .GetItemAsync<string>("theme");
+
+        if (!string.IsNullOrEmpty(localStorageTheme))
+        {
+            selectedTheme = localStorageTheme;
+        }
+    }
+
+    private string GetCssClass() => 
+    selectedTheme == "Light" ? string.Empty : "dark-mode";
+
+    private bool IsSelectedTheme(string theme) => 
+        theme == selectedTheme;
+
+    private async Task ChangeThemeAsync(ChangeEventArgs e)
+    {
+        selectedTheme = e.Value!.ToString()!;
+        await LocalStorageService.SetItemAsync("theme", selectedTheme);
+    }
+}
