@@ -1,0 +1,17 @@
+﻿@inject ISoundPlayer SoundPlayer
+
+<div id="@PadModel.Id" class="pad" @onclick="OnPadClicked">
+    <h4>@PadModel.SoundName</h4>
+    <h5>@PadModel.Key</h5>
+</div>
+
+@code {
+    [Parameter]
+    public PadModel PadModel { get; set; }
+
+    private async void OnPadClicked()
+    {
+        if (PadModel is null) return;
+        await SoundPlayer.Play(PadModel.SoundLocation, PadModel.Id);
+    }
+}

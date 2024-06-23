@@ -1,0 +1,55 @@
+﻿@page "/"
+@inject ISoundPlayer SoundPlayer
+
+<div class="main">
+    <h1>BlazorPad</h1>
+    <div class="surface" @ref="surfaceRef" tabindex="0" @onkeypress="OnKeyPressed" >
+        @foreach (PadModel pad in pads)
+        {
+            <Pad PadModel="@pad" />
+        }
+    </div>
+</div>
+
+@code {
+
+    private IList<PadModel> pads =
+    [
+        new("piano", "audio/piano.wav", "r"),
+        new("strings", "audio/strings.wav", "t"),
+        new("bass", "audio/bass.wav", "y"),
+        new("kick", "audio/kick.wav", "f"),
+        new("snare", "audio/snare.wav", "g"),
+        new("hihat", "audio/hihat.wav", "h"),
+        new("fx1", "audio/fx1.wav", "v"),
+        new("fx2", "audio/fx2.wav", "b"),
+        new("fx3", "audio/fx3.wav", "n")
+    ];
+
+    private ElementReference surfaceRef;
+
+    protected sealed override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await surfaceRef.FocusAsync();
+    }
+
+    private async void OnKeyPressed(KeyboardEventArgs args)
+    {
+        await PlaySound(GetPressedPad(args.Key));
+    }
+
+    private PadModel GetPressedPad(string key)
+    {
+        return pads.SingleOrDefault(p => p.Key == key)!;
+    }
+
+    private async Task PlaySound(PadModel padModel)
+    {
+        if (padModel is null)
+        {
+            return;
+        } 
+        await SoundPlayer.Play(padModel.SoundLocation, padModel.Id);
+    }
+}
