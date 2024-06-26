@@ -1,0 +1,27 @@
+﻿@page "/"
+@inject IConfiguration Configuration
+
+<PageTitle>Send Email</PageTitle>
+
+<h1>Send Email</h1>
+
+<EditForm Model="EmailRequest" FormName="EmailRequestForm" OnSubmit="SendEmail">
+    <InputText @bind-Value="EmailRequest.To" class="form-control mt-2" placeholder="To" />
+    <InputText @bind-Value="EmailRequest.Subject" class="form-control mt-2" placeholder="Subject" />
+    <InputTextArea @bind-Value="EmailRequest.Body" class="form-control mt-2" placeholder="Body" />
+    <button class="btn btn-primary mt-2">Send</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm(FormName = "EmailRequestForm")]
+    public EmailRequest EmailRequest { get; set; } = new();
+
+    private void SendEmail()
+    {
+        MimeMessage email = new();
+        email.SetProperties(EmailRequest, Configuration);
+
+        using SmtpClient smtp = new();
+        smtp.SendEmail(email, Configuration);
+    }
+}
