@@ -1,0 +1,29 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+<p>Go ahead and upload some files.</p>
+
+<EditForm Model="FileInput" enctype="multipart/form-data"
+          FormName="UploadFileForm"
+          OnSubmit="UploadFileAsync"
+>
+    <InputFile name="FileInput.File" class="form-control" />
+    <button class="btn btn-primary mt-2">Upload</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm(FormName = "UploadFileForm")]
+    public FileModel FileInput { get; set; } = new();
+
+    private async Task UploadFileAsync()
+    {
+        string folderPath = Path.Combine("C:\\Users\\dkPhKrNi\\source\\fabulab\\100DaysOfCode\\Blazor\\89-FileUploadsSSR\\FileUploadsSSR\\wwwroot\\uploaded-files");
+        string filePath = Path.Combine(folderPath, FileInput.File.FileName);
+        Directory.CreateDirectory(folderPath);
+
+        await using FileStream stream = new(filePath, FileMode.Create);
+        await FileInput.File.CopyToAsync(stream);
+    }
+}
