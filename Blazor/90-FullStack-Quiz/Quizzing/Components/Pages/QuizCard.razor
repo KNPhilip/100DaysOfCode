@@ -1,0 +1,50 @@
+﻿@page "/quizcard"
+@page "/quizcard/{Category}"
+@inject NavigationManager NavigationManager
+
+<div class="quiz">
+    @if (questionIndex < Questions.Count())
+    {
+        <div class="app-title">
+            Quizzing
+        </div>
+        <div class="quiz-header">
+            <h3>Question @(questionIndex + 1)/@Questions.Count():</h3>
+            @Questions[questionIndex].QuestionTitle
+        </div>
+        <div class="quiz-body">
+            @foreach (string option in Questions[questionIndex].Options)
+            {
+                <OptionCard Option="@option" OnOptionSelected="OptionSelected"></OptionCard>
+            }
+        </div>
+    }
+    else
+    {
+        @if (score > (Questions.Count / 2))
+        {
+            <div class="app-title">
+                <img src="https://img.icons8.com/ios/100/000000/prize--v1.png" />
+            </div>
+            <div class="app-title">
+                Congratulations
+            </div>
+        }
+        else
+        {
+            <div class="app-title">
+                <img src="https://img.icons8.com/color/96/000000/lose.png" />
+            </div>
+            <div class="app-title">
+                Better luck next time
+            </div>
+        }
+        <div class="quiz-header">
+            <b>You scored @score points!</b>
+        </div>
+        <div class="quiz-footer">
+            <button class="next-btn" @onclick="RestartQuiz">Try Again</button>
+            <button class="back-btn" @onclick="ExitQuiz">Go Back</button>
+        </div>
+    }
+</div>
