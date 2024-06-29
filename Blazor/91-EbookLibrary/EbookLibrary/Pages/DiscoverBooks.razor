@@ -1,0 +1,156 @@
+﻿@page "/discover-books"
+@using EbookLibrary.Models
+
+<PageTitle>Discover Books</PageTitle>
+
+<h3>Discover Books</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Author</th>
+            <th>Price</th>
+            <th>Source</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Book pizza in books)
+        {
+            <tr>
+                <td>@pizza.Name</td>
+                <td>@pizza.Description</td>
+                <td>@pizza.Author</td>
+                <td>$@pizza.Price</td>
+                <td><a href="@pizza.SourceUrl" target="_blank">Source URL</a></td>
+                <td><img src="@pizza.ImageUrl" style="width: 125px; height: 160px;" /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Book> books = 
+    [
+        new() 
+        {
+            Name = "Clean Code",
+            Description = "Even bad code can function. But if code isn’t clean, it can bring a development organization to its knees. " +
+                "Every year, countless hours and significant resources are lost because of poorly written code. But it doesn’t have to be that way.",
+            Author = "Robert C. Martin",
+            Price = 42.09m,
+            SourceUrl = "https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882",
+            ImageUrl = "https://m.media-amazon.com/images/I/51E2055ZGUL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "Clean Architecture",
+            Description = "By applying universal rules of software architecture, you can dramatically improve developer productivity throughout the life of any software system",
+            Author = "Robert C. Martin",
+            Price = 25.00m,
+            SourceUrl = "https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164/ref=sr_1_1?crid=21UDZQSAAM7K&dib=eyJ2IjoiMSJ9.VoeHqhzpU1G3SWHS0HFCs56fffOdlnlkIdCJvA7tDvBkHofLU0Ao17gmHCTF7DK3dYeB9bzKJqj8D7b16UQy84paHAUnqFfVook2g-tu9V9qqWrPZF8F57CnCOsK-yDRzyOi8b0oRjwGCXZusaXhNIrFn12-Ss10rsqaFrbmXQTcqSZzAdNvqiI9cfwO_inqe_CIv3noOrmizwOyPAikKLeQDEzu6Lh2DzDzp9UvQAI.WX-xYESYMVPjixypwNCSKmJQCAkVa4AKIaUcCwNtviw&dib_tag=se&keywords=clean+architecture&qid=1719148755&s=books&sprefix=clean+arch%2Cstripbooks-intl-ship%2C208&sr=1-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/61r4tYVsRVL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "Clean Craftsmanship",
+            Description = "timely and humble reminder of the ever-increasing complexity of our programmatic world and how we owe it to the legacy of humankind--and to ourselves--to practice ethical development. Take your time reading",
+            Author = "Robert C. Martin",
+            Price = 37.83m,
+            SourceUrl = "https://www.amazon.com/Clean-Craftsmanship-Disciplines-Standards-Ethics/dp/013691571X/ref=sr_1_5?crid=9K6469FKJEN2&dib=eyJ2IjoiMSJ9.eUeDq4BPqNYI52SOU-OcJ9fg4J75YG4aiq9Xfdp5kr3ghCL-2cmH_SEEY_0I_aawkBkDPpKLW52_QXAkJccIZKR7UU7NI6Txj9ukGwiZVn9BpALPrCWnh8xDWVS4mDr4_NRJQwjsscIhFKWW_85L4HZ3mprUNbIMW0CqoSRM-ePG_sJwf49GaneDRcE5CGB4IOQRlSTWUG-UNV_jnXJGqjKh1NgWPl630jXYaaPRaDk.ePB_hW1kCcSdSZ3wTvI2YsbxDRSmIuYnIcbPeyFu6Nc&dib_tag=se&keywords=robert+c+martin&qid=1719148859&s=books&sprefix=robert+c+martin%2Cstripbooks-intl-ship%2C199&sr=1-5",
+            ImageUrl = "https://m.media-amazon.com/images/I/61Pk6qD6stL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "Design Patterns",
+            Description = "Capturing a wealth of experience about the design of object-oriented software, four top-notch designers present a catalog of simple and succinct solutions to commonly occurring design problems.",
+            Author = "Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides",
+            Price = 24.95m,
+            SourceUrl = "https://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612/ref=sr_1_1?crid=Q79Q8AV4ZDIG&dib=eyJ2IjoiMSJ9.mTRaTOPYqsPcUsGD8aznte8IMQZZiYjv7_Xwyyi1iS07DUeMD7qVcUKs0c2pkS9w_zKj_zRnALk2Ds4EPxn3A9vyZRa0ozzHZ4y7TNGDv7J8eZiPy_05z4Wl-oXiJgq6vaTlSv0RfJOdWFVN1fko6IPkJpU1y9J-FnR0e7CK5OrFHMiWvQgRNZSRwrleHTCYxstQKyVLPaL3Y0Z8ung_QEUSTB5-TfQGExySHLjYncU.1CU_uXfzvsHm0wbQwogEPEzOSPvRQurCZhJIU31stLM&dib_tag=se&keywords=design+patterns&qid=1719149014&s=books&sprefix=design+pattern%2Cstripbooks-intl-ship%2C228&sr=1-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/81gtKoapHFL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "The Pragmatic Programmer",
+            Description = "Dave Thomas and Andy Hunt wrote the first edition of this influential book in 1999 to help their clients create better software and rediscover the joy of coding.",
+            Author = "David Thomas and Andrew Hunt",
+            Price = 43.99m,
+            SourceUrl = "https://www.amazon.com/Pragmatic-Programmer-Anniversary-Journey-Mastery/dp/B0833FBNHV/ref=sr_1_1?crid=E1KEOD7WQH49&dib=eyJ2IjoiMSJ9.84Xun4zePRzxcYJXHbNXB8rqhVpmeET0Ac8jyZ2dluUZHty2sHX0n1IsAHY91IBc--y9DEjg1ZfxUEqU_4EDq_5n1pkg5ysl65iuvH9JE0NHoKeDTcNUkfSPOUsginuW3kAT9n-owQgvTchrBj_TTJvqB2i-n0mGb8RBe6KYTuxBCNW5UbrlH4jAy4Z72cPdFD00tKzCG1peXlucyr0JnEP3ST8yveMWv6-0g9jK1bM.U-U6UV9I6KQSC7n_exgbm70DWzc00BMOuGoyOKsrBAo&dib_tag=se&keywords=the+pragmatic+programmer&qid=1719149141&s=books&sprefix=the+pragmatic+programme%2Cstripbooks-intl-ship%2C201&sr=1-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/91WFb-PpoNL._SX342_.jpg"
+        },
+        new()
+        {
+            Name = "Visual C#: How to Program",
+            Description = "For all basic-to-intermediate level courses in Visual C# programming. An informative, engaging, challenging and entertaining introduction to Visual C#.",
+            Author = "Paul Deitel and Harvey Deitel",
+            Price = 83.93m,
+            SourceUrl = "https://www.amazon.com/Visual-C-How-Program-Global/dp/1292153466/ref=sr_1_3?crid=CCYZJ0U7YSV2&dib=eyJ2IjoiMSJ9.8-LafGnXx5unmlC_fIEEg4eXy7aOf1vr2qFNMCswfD1kH_sCHy7Q2nThmjRZ-8Z6vGXXQ7eVbFYETEk0_SKxI1c0aLtpXxB1lquT7yNByEDW6bZAo9nNXVB197HztPMba36a8_-42-usWM5kEA21iT9Dhh4jaz472mZisBICJZ3xR8kEkmzn1tAMxF_iRgUgSji0D2PqVWEm6k1yWXsmlgCVosKZT1YqTonS_U3RBd4.hb3jO1fLJCoRE0Ntga7wg9s8SJwCI8KdZ4dakihwstY&dib_tag=se&keywords=visual+c%23+how+to+program&qid=1719149308&s=audible&sprefix=visual+c+how+to+progr%2Caudible%2C188&sr=1-3",
+            ImageUrl = "https://m.media-amazon.com/images/I/614FS2EOoTL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "Timeless laws of Software Development",
+            Description = "Good software requires more than wishful thinking. Written by a software expert with years of hands-on experience, this book clearly explains the laws and practices you can use to improve productivity and quality.",
+            Author = "Jerry Fitzpatrick",
+            Price = 19.95m,
+            SourceUrl = "https://www.amazon.com/Timeless-Software-Development-Jerry-Fitzpatrick/dp/099933560X/ref=sr_1_1?crid=11T7VC9X9XVSK&dib=eyJ2IjoiMSJ9.kBeOE-FUL11xUs_yrS3jknqYiMeqEof9BJcavzqR9ucMprAES-1NDO-Y9Nd_i0zw.2orkicoPoX6Gl8d8YKbEZRLuL4RtYNNnNmdgVszQ8b4&dib_tag=se&keywords=timeless+laws+of+software+development&qid=1719149417&sprefix=timeless+laws+of+soft%2Caps%2C222&sr=8-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/712Sly1RUWL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "Working Effectively with Legacy Code",
+            Description = "This book provides programmers with the ability to cost effectively handlecommon legacy code problems without having to go through the hugelyexpensive task of rewriting all existing code.",
+            Author = "Michael Feathers",
+            Price = 43.73m,
+            SourceUrl = "https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052/ref=sr_1_1?crid=U90XN7OG90IO&dib=eyJ2IjoiMSJ9.ttR5tgOlVNtm_haS36LU_taj0v8XMS4sn0d6O9mK-6xLEibAn8csa_cCHZxTfKMICSkVPSGakRNWcrGIan2Sw4LE7FqdVAyK2s0YQJBsjl0IEWj4AGc0LlQRsqXSNOmrcL-gxDtRWj0-da8XDP8bHcPYMWUD0yEf8ae8fHSJ8IBqjxvDbDriMB67pUg3kktIgfriwy_CI6Q0xxxIXCLkc55XECFsDVh-4ZpNP625TiA.4A4Qk9qZ082B4-qcX8rK_cHTiiBjJMzjJ64GDqhDb6Y&dib_tag=se&keywords=working+effectively+with+legacy+code&qid=1719149474&sprefix=working+effecti%2Caps%2C217&sr=8-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/71UAsPBdgdL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "The C Programming Language",
+            Description = "The authors present the complete guide to ANSI standard C language programming. Written by the developers of C, this new version helps readers keep up with the finalized ANSI standard for C.",
+            Author = "Brian W. Kernighan and Dennis M. Ritchie",
+            Price = 32.03m,
+            SourceUrl = "https://www.amazon.com/Programming-Language-2nd-Brian-Kernighan/dp/0131103628/ref=sr_1_1?crid=2LIIUQ8SJRTJO&dib=eyJ2IjoiMSJ9.77cd8O83JPnIBV1qb_ggSwP3MzxyeJ2enr1kF6lEdCNJWSN2BicbXEqACqXBmSePruqy6Si18JVTjMLaaBg_Y0EyjblfNLvN06PLxc1kIkFATeS9dCP0mRwOJOVeuXNrZyxi-xIjchTcIxk7M5k7XbVI7GuPI5N6dkslGf5TNk-73sV90TVClvM3yNd1yY9tCtYLpaWYd6VibGo1x3sH5jgT42rOCjjFwQFJDPbXZsM.jYdZvl372V4qsLo3NyJ1NukEwYe_h1MaI8hKzS4GYuk&dib_tag=se&keywords=the+c+programming+language&qid=1719149576&sprefix=the+c+programming+langua%2Caps%2C212&sr=8-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/51EyaJeebHL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "The C++ Programming Language",
+            Description = "Bjarne Stroustrup, the designer and original implementer of C++, has reorganized, extended, and completely rewritten his definitive reference and tutorial for programmers who want to use C++ most effectively.",
+            Author = "Bjarne Stroustrup",
+            Price = 64.77m,
+            SourceUrl = "https://www.amazon.com/Programming-Language-hardcover-4th/dp/0321958322/ref=sr_1_1?crid=2CG8QPK62SYN7&dib=eyJ2IjoiMSJ9.L5KuSzbU68wV1b1q00hpMhAZMRiexgyWIr6iBxrsaS2qPiCywaHF58ZR76OdCeEUpuIaoUjMDYwqhG8WKOheEkgbw6V2t38TS2Tftv5y4Hh6FzFB6ZXInabqzieG_SD1VWHbso0rb5sQaV72omLpChTj5MGFkyoIBWHOo95oTyroaQNd0zhzKbJ-UYKSHbc3a-aw9YW3oMggIr65x816ZvrZwczKOrt_cXZN3ufA0_s.B8Kl9e5DWs61M8h9L-aqQ-QbwjHqS8Z7Xsx_9sU6WhA&dib_tag=se&keywords=the+c%2B%2B+programming+language&qid=1719150852&sprefix=the+c%2B+programming+language%2Caps%2C426&sr=8-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/51XpsCFDOuL._SX342_SY445_.jpg"
+        },
+        new()
+        {
+            Name = "Eloquent JavaScript 3rd Edition",
+            Description = "JavaScript lies at the heart of almost every modern web application, from social apps like Twitter to browser-based game frameworks like Phaser and Babylon.",
+            Author = "Marijn Haverbeke",
+            Price = 21.99m,
+            SourceUrl = "https://www.amazon.com/Eloquent-JavaScript-3rd-Introduction-Programming/dp/1593279507/ref=sr_1_6?crid=27JDKARVCTCO5&dib=eyJ2IjoiMSJ9.UuUSGjAECe1fZEFzi-idG3a1UK7UwsRkyGyjjhv-p0Gpnr15UJzjo5DBGtd7AxMYHI6QNB6H_VtkjVrq3ohDh1SCTPMqdwBqav8P-F_HPvOZsPxKTupQzMMiQ9FRAlstRp0aH1d_vKym69jsENf-9AciSs_TspbrLlWRle5ElFUQPIMdwyCLqRxKF0lC2ssKlW5yLRYE-O0wJqJ5Xp0m4VDExcLcIeRGaAfyS-2S6jRytOMiZHcfMrmSQi5O6mxApEVi5JlQqe_sZHsIx6WDIhMTpIbVBt0k1HG2u49rGrU.oiZJV4rU-cTjWk62-L3EIK1J4vi488H0bY_8sROLMcc&dib_tag=se&keywords=javascript&qid=1719150985&sprefix=javascript%2Caps%2C229&sr=8-6",
+            ImageUrl = "https://m.media-amazon.com/images/I/81HqVRRwp3L._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "Designing Data-Intensive Applications",
+            Description = "Data is at the center of many challenges in system design today. Difficult issues need to be figured out, such as scalability, consistency, reliability, efficiency, and maintainability.",
+            Author = "Martin Kleppmann",
+            Price = 28.07m,
+            SourceUrl = "https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321/ref=sr_1_1?crid=1QEL1E5WY4BRB&dib=eyJ2IjoiMSJ9.8D1DmwHm0vac-EQEVU3l2WSsew-qQY5p9iWrgCURZLpVOTqqeVzjGUcfKLQeJA9CY4ez23fZ93uLKaC4pzlHy-2GOjZsnTzxpBzkFsR14pXP5moor983IQ42QV83Uw858LlRiPbOqI_essYkGi9yzW9A4J_Lxa0RCVNlp23xtxU.Cqeud8BP3BEhfMI8N3TNlU-mMNSLFGE7hih5USE8mWM&dib_tag=se&keywords=data+intensive+apps&qid=1719151598&sprefix=data+intensive+ap%2Caps%2C216&sr=8-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/91YfNb49PLL._SY466_.jpg"
+        },
+        new()
+        {
+            Name = "Structure and Interpretation of Computer Programs",
+            Description = "Structure and Interpretation of Computer Programs has had a dramatic impact on computer science curricula over the past decade. This long-awaited revision contains changes throughout the text.",
+            Author = "Harold Abelson and Gerald Jay Sussman with Julie Sussman",
+            Price = 48.33m,
+            SourceUrl = "https://www.amazon.com/Structure-Interpretation-Computer-Programs-Engineering/dp/0262510871/ref=sr_1_1?crid=3OGRTYUOX893M&dib=eyJ2IjoiMSJ9.yvDe9vTEM9IbNsPJnH-SMQRsOaw-1QQ6wrB__8naI71kfouyX4unBmBeLd4PfRCnc_SsnfZn6Xyvu_b4Q5wMIr9URbRwpaiQXsqZZh9d9sHWi7xonkEhxWBGfhT8tRRmYcyARMu0hiQKG3TJ43UBQAlSsWMZh2sSx94Jbnq2e3iyZKCutzro527bGHZ4CaY4dSW-zGRas69746uq_H24F0VHXtf1FsJzYrSa684Yfrs.84EMk7sJmXsbeG1Nv3sH0-CQJtaPMO5tEfRTseCufQ0&dib_tag=se&keywords=the+structure+and+interpretation+of+computer+programs&qid=1719151664&sprefix=the+structure+and+interpretation+of+computer%2Caps%2C219&sr=8-1",
+            ImageUrl = "https://m.media-amazon.com/images/I/71BBXQnykuL._SY466_.jpg"
+        }
+    ];
+}
