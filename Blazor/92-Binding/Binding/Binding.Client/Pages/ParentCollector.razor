@@ -1,0 +1,12 @@
+﻿@page "/parent-collector"
+@rendermode InteractiveAuto
+
+<h3>ParentCollector</h3>
+
+<CoinCollector CollectionRate="10" @bind-CoinsCollected="coinsCollected"  />
+
+<p>Total coins: @coinsCollected</p>
+
+@code {
+    private int coinsCollected = 0;
+}

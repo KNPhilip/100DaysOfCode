@@ -1,0 +1,27 @@
+﻿@page "/coin-collector"
+@rendermode InteractiveAuto
+
+<h3>CoinCollector</h3>
+
+<p>Coins collected: @CoinsCollected</p>
+
+<button class="btn btn-primary" @onclick="CollectCoin">
+    Collect Coin
+</button>
+
+@code {
+    [Parameter]
+    public int CollectionRate { get; set; } = 1;
+
+    [Parameter]
+    public int CoinsCollected { get; set; } = 0;
+
+    [Parameter]
+    public EventCallback<int> CoinsCollectedChanged { get; set; }
+
+    private void CollectCoin()
+    {
+        CoinsCollected += CollectionRate;
+        CoinsCollectedChanged.InvokeAsync(CoinsCollected);
+    }
+}
