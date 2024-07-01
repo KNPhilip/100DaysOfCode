@@ -1,0 +1,97 @@
+﻿@page "/burl"
+@inject HttpClient Http
+
+<PageTitle>HTTP Client</PageTitle>
+
+<h3>HTTP Client</h3>
+
+<EditForm Model="@httpRequest" OnValidSubmit="SendRequest">
+    <div class="form-group mt-2 mb-2">
+        <label for="method">Method</label>
+        <select id="method" class="form-control" @bind="httpRequest.Method">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+        </select>
+    </div>
+    <div class="form-group mb-2">
+        <label for="url">URL</label>
+        <input type="text" id="url" class="form-control" @bind="httpRequest.Url" required />
+    </div>
+    <div class="form-group mb-2">
+        <label for="headers">Headers (JSON format)</label>
+        <textarea id="headers" class="form-control" @bind="httpRequest.Headers"></textarea>
+    </div>
+    <div class="form-group mb-2">
+        <label for="body">Body (JSON format)</label>
+        <textarea id="body" class="form-control" @bind="httpRequest.Body"></textarea>
+    </div>
+    <button class="btn btn-primary">Send</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(responseMessage))
+{
+    <h4>Response</h4>
+    <pre>@responseMessage</pre>
+}
+
+@code {
+    private HttpRequestModel httpRequest = new();
+    private string? responseMessage;
+
+    private async Task SendRequest()
+    {
+        try
+        {
+            HttpRequestMessage requestMessage = new HttpRequestMessage(new HttpMethod(httpRequest.Method), httpRequest.Url);
+
+            if (!string.IsNullOrEmpty(httpRequest.Headers))
+            {
+                var headers = JsonSerializer.Deserialize<Dictionary<string, string>>(httpRequest.Headers);
+                foreach (var header in headers!)
+                {
+                    if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    requestMessage.Headers.Add(header.Key, header.Value);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(httpRequest.Body) && (httpRequest.Method == "POST" || httpRequest.Method == "PUT"))
+            {
+                var content = new StringContent(httpRequest.Body, System.Text.Encoding.UTF8, "application/json");
+
+                if (!string.IsNullOrEmpty(httpRequest.Headers))
+                {
+                    var headers = JsonSerializer.Deserialize<Dictionary<string, string>>(httpRequest.Headers);
+                    foreach (var header in headers!)
+                    {
+                        if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+                        {
+                            content.Headers.ContentType = new MediaTypeHeaderValue(header.Value);
+                        }
+                    }
+                }
+
+                requestMessage.Content = content;
+            }
+
+            HttpResponseMessage response = await Http.SendAsync(requestMessage);
+            responseMessage = await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            responseMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private sealed class HttpRequestModel
+    {
+        public string Method { get; set; } = "GET";
+        public string? Url { get; set; }
+        public string? Headers { get; set; }
+        public string? Body { get; set; }
+    }
+}
