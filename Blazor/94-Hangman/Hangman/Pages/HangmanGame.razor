@@ -1,0 +1,86 @@
+﻿@page "/hangman"
+
+<h1>Hangman Game</h1>
+
+@if (isGameWon)
+{
+    <p>Congratulations! You've guessed the word!</p>
+    <button @onclick="ResetGame">Play Again</button>
+}
+else if (isGameLost)
+{
+    <p>Sorry, you're out of lives. The word was @word.</p>
+    <button @onclick="ResetGame">Try Again</button>
+}
+else
+{
+    <p>
+        @foreach (char c in guessedWord)
+        {
+            @c
+        }
+    </p>
+    <p>Lives left: @lives</p>
+    <div>
+        @foreach (char c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        {
+            <button @onclick="() => MakeGuess(c)" disabled="@guessedLetters.Contains(c)">@c</button>
+        }
+    </div>
+}
+
+@code {
+    private string word = "BLAZOR";
+    private char[] guessedWord = [];
+    private HashSet<char> guessedLetters = new HashSet<char>();
+    private int lives = 6;
+    private bool isGameWon = false;
+    private bool isGameLost = false;
+
+    protected override void OnInitialized()
+    {
+        ResetGame();
+    }
+
+    private void ResetGame()
+    {
+        guessedWord = new string('_', word.Length).ToCharArray();
+        guessedLetters.Clear();
+        lives = 6;
+        isGameWon = false;
+        isGameLost = false;
+    }
+
+    private void MakeGuess(char guess)
+    {
+        if (word.Contains(guess))
+        {
+            for (int i = 0; i < word.Length; i++)
+            {
+                if (word[i] == guess)
+                {
+                    guessedWord[i] = guess;
+                }
+            }
+        }
+        else
+        {
+            lives--;
+        }
+
+        guessedLetters.Add(guess);
+        CheckGameState();
+    }
+
+    private void CheckGameState()
+    {
+        if (new string(guessedWord) == word)
+        {
+            isGameWon = true;
+        }
+        else if (lives <= 0)
+        {
+            isGameLost = true;
+        }
+    }
+}
