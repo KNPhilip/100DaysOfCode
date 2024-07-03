@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<PageTitle>Simple Grocery List</PageTitle>
+
+<h1>Simple Grocery List</h1>
+
+<p>Add something to the list:</p>
+<input type="text" @bind="newGroceryItem" />
+<button @onclick="@(() => groceryList.Add(newGroceryItem))" class="btn btn-primary">Add</button>
+
+<ul>
+    @foreach (string groceryItem in groceryList)
+    {
+        <li style="display: inline-block">@groceryItem</li><br />
+    }
+</ul>
+
+@code {
+    List<string> groceryList = [];
+    string newGroceryItem = string.Empty;
+}
