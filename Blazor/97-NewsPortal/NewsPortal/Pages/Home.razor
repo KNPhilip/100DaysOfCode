@@ -1,0 +1,92 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<div class="news-container">
+    @foreach (NewsArticle article in articles)
+    {
+        <div class="news-article">
+            <h2>@article.Title</h2>
+            <p>@article.Summary</p>
+            <a href="@article.Url">Read more</a>
+        </div>
+    }
+</div>
+
+<style>
+    .news-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .news-article {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 1rem;
+        width: calc(33% - 1rem);
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+        .news-article h2 {
+            margin-top: 0;
+        }
+
+        .news-article a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .news-article a:hover {
+            text-decoration: underline;
+        }
+</style>
+
+@code {
+    private List<NewsArticle> articles =
+    [
+        new()
+        {
+            Title = "Breaking News: Local Startup Raises $10 Million",
+            Summary = "A local tech startup has successfully raised $10 million in a Series A funding round to expand its innovative AI technology.",
+            Url = "https://example.com/article1"
+        },
+        new()
+        {
+            Title = "Community Event: Summer Festival Announced",
+            Summary = "The city council has announced the dates for the annual summer festival, featuring live music, food trucks, and family-friendly activities.",
+            Url = "https://example.com/article2"
+        },
+        new()
+        {
+            Title = "Health Update: New Guidelines for a Balanced Diet",
+            Summary = "Health experts have released new guidelines for maintaining a balanced diet, emphasizing the importance of fresh vegetables and whole grains.",
+            Url = "https://example.com/article3"
+        },
+        new()
+        {
+            Title = "Sports: Local Team Wins Championship",
+            Summary = "The local high school football team has won the state championship, marking their third consecutive victory in the tournament.",
+            Url = "https://example.com/article4"
+        },
+        new()
+        {
+            Title = "Technology: Advances in Renewable Energy",
+            Summary = "Researchers have made significant advances in renewable energy technologies, promising more efficient solar panels and wind turbines.",
+            Url = "https://example.com/article5"
+        },
+        new()
+        {
+            Title = "Travel: Top Destinations for 2024",
+            Summary = "Travel experts have compiled a list of top destinations to visit in 2024, including hidden gems and popular hotspots.",
+            Url = "https://example.com/article6"
+        }
+    ];
+
+    private sealed class NewsArticle
+    {
+        public string? Title { get; set; }
+        public string? Summary { get; set; }
+        public string? Url { get; set; }
+    }
+}
