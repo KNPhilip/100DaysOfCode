@@ -1,0 +1,63 @@
+﻿.budget-container {
+    display: flex;
+    gap: 2rem;
+}
+
+.budget-form, .budget-list {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+    .budget-form label {
+        display: block;
+        margin: 0.5rem 0 0.2rem;
+    }
+
+    .budget-form input {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .budget-form button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+    }
+
+        .budget-form button:hover {
+            background-color: #0056b3;
+        }
+
+    .budget-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .budget-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+    }
+
+    .budget-list button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.3rem 0.6rem;
+        cursor: pointer;
+    }
+
+        .budget-list button:hover {
+            background-color: #c82333;
+        }
+
+.total {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+}

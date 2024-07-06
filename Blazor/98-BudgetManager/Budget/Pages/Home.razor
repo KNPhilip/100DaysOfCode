@@ -1,0 +1,53 @@
+﻿@page "/"
+
+<PageTitle>Budget Manager</PageTitle>
+
+<div class="budget-container">
+    <div class="budget-form">
+        <h2>Add Budget Item</h2>
+        <label for="description">Description:</label>
+        <input id="description" @bind="newItem.Description" />
+
+        <label for="amount">Amount:</label>
+        <input id="amount" type="number" @bind="newItem.Amount" />
+
+        <button @onclick="AddItem">Add</button>
+    </div>
+
+    <div class="budget-list">
+        <h2>Monthly Budget</h2>
+        <ul>
+            @foreach (BudgetItem item in budgetItems)
+            {
+                <li>
+                    @item.Description: @item.Amount:C
+                    <button @onclick="() => RemoveItem(item)">Remove</button>
+                </li>
+            }
+        </ul>
+        <div class="total">
+            <strong>Total:</strong> @Total:C
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<BudgetItem> budgetItems = [];
+    private BudgetItem newItem = new();
+
+    private void AddItem()
+    {
+        if (!string.IsNullOrEmpty(newItem.Description) && newItem.Amount > 0)
+        {
+            budgetItems.Add(newItem);
+            newItem = new BudgetItem();
+        }
+    }
+
+    private void RemoveItem(BudgetItem item)
+    {
+        budgetItems.Remove(item);
+    }
+
+    private decimal Total => budgetItems.Sum(item => item.Amount);
+}
