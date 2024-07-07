@@ -1,0 +1,53 @@
+﻿@page "/login"
+@inject ISender Sender
+@inject NavigationManager NavigationManager
+
+<PageTitle>Login</PageTitle>
+
+<div class="space-y-6">
+    <h2 class="text-3xl font-extrabold text-gray-50">Login</h2>
+
+    <EditForm Model="UserModel" OnValidSubmit="HandleValidSubmitAsync" FormName="LoginUserForm" class="space-y-6 my-4">
+        <DataAnnotationsValidator />
+        <div>
+            <label for="name" class="text-sm">Username</label>
+            <InputText id="name" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="UserModel.UserName" />
+            <ValidationMessage For="() => UserModel.UserName" class="text-danger" />
+        </div>
+        <div>
+            <label for="password" class="text-sm">Password</label>
+            <InputText id="password" type="password" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="UserModel.Password" />
+            <ValidationMessage For="() => UserModel.Password" class="text-danger" />
+        </div>
+        <button class="w-full p-3 text-sm font-bold uppercase rounded bg-blue-400 text-gray-900" type="submit">Submit</button>
+    </EditForm>
+
+    <span class="text-danger">@errorMessage</span>
+
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginUserModel UserModel { get; set; } = new();
+    private string errorMessage = string.Empty;
+
+    private async Task HandleValidSubmitAsync()
+    {
+        LoginUserCommand command = new()
+        {
+            UserName = UserModel.UserName,
+            Password = UserModel.Password
+        };
+
+        Result result = await Sender.Send(command);
+        
+        if (result.Success)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = result.Error ?? "Login failed.";
+        }
+    }
+}

@@ -1,0 +1,69 @@
+﻿@page "/"
+@inject ISender Sender
+@attribute [StreamRendering]
+
+<PageTitle>Articles</PageTitle>
+
+<div class="space-y-6">
+    <h2 class="text-3xl font-extrabold text-gray-50">Articles</h2>
+
+    <AuthorizeView Roles="Admin, Writer">
+        <a href="/article-editor" class="p-3 text-sm font-bold uppercase rounded bg-blue-400 text-gray-900 inline-block">Create New Article</a>
+    </AuthorizeView>
+
+    @if (articles is null)
+    {
+        <p><em>Loading articles...</em></p>
+    }
+    else if (articles.Count == 0)
+    {
+        <p><em>No article found.</em></p>
+    }
+    else
+    {
+        <ul class="space-y-8 xl:space-y-10">
+            @foreach (ArticleResponseDto article in articles)
+            {
+                <li>
+                    <article>
+                        <dl>
+                            <dd class="text-xs text-gray-400">
+                                <time>@article.DatePublished</time>
+                                <span>by @article.UserName</span>
+                            </dd>
+                        </dl>
+                        <div class="space-y-1">
+                            <h3 class="text-2xl font-bold">
+                                <a href="/articles/@article.Id" class="text-gray-50">@article.Title</a>
+                            </h3>
+                            <p class="max-w-full prose text-gray-100">@article.Content</p>
+                            @if (article.CanEdit)
+                            {
+                                <div class="flex flex-wrap space-x-3">
+                                    <a href="/article-editor/@article.Id" class="text-xs text-blue-400">Edit Article</a>
+                                </div>
+                            }
+                        </div>
+                    </article>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    private List<ArticleResponseDto>? articles = new();
+
+    protected sealed override async Task OnInitializedAsync()
+    {
+        Result<List<ArticleResponseDto>> result = await Sender.Send(new GetArticlesQuery());
+        if (result.Success)
+        {
+            articles = result;
+        }
+        else
+        {
+            articles = new();
+        }
+    }
+}

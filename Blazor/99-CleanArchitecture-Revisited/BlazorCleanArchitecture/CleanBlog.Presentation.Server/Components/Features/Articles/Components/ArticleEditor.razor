@@ -1,0 +1,147 @@
+﻿@page "/article-editor"
+@page "/article-editor/{ArticleId:int}"
+@inject ISender Sender
+@inject NavigationManager NavigationManager
+@inject UserManager<User> UserManager
+@attribute [Authorize]
+
+@if (isEditMode && Article is not null)
+{
+    <PageTitle>Edit Article "@Article.Title"</PageTitle>
+    <h2 class="text-3xl font-extrabold text-gray-50">Edit Article "@Article.Title"</h2>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <PageTitle>Error</PageTitle>
+    <h2 class="text-3xl font-extrabold text-gray-50">Error</h2>
+}
+else
+{
+    <PageTitle>Create New Article</PageTitle>
+    <h2 class="text-3xl font-extrabold text-gray-50">Create New Article</h2>
+}
+
+@if (Article is not null)
+{
+    <EditForm Model="Article" OnSubmit="HandleValidSubmitAsync" FormName="ArticleEditorForm" class="space-y-6 my-4">
+        <div>
+            <label for="title" class="text-sm">Title</label>
+            <InputText id="title" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="Article.Title" />
+        </div>
+        <div>
+            <label for="content" class="text-sm">Content</label>
+            <InputTextArea id="content" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="Article.Content" />
+        </div>
+        <div>
+            <label for="date" class="text-sm">Date</label>
+            <InputDate id="date" Type="InputDateType.DateTimeLocal" class="w-full p-3 rounded bg-gray-800 border-gray-400 border-1 shadow" @bind-Value="Article.DatePublished" />
+        </div>
+        <div class="form-check">
+            <InputCheckbox class="form-check-input checked:bg-blue-400" @bind-Value="Article.IsPublished" />
+            <label>Is Published</label>
+        </div>
+
+        <button class="w-full p-3 text-sm font-bold uppercase rounded bg-blue-400 text-gray-900" type="submit">Submit</button>
+    </EditForm>
+
+    if (isEditMode)
+    {
+        <p>
+            <h2 class="text-3xl font-extrabold text-gray-50">Danger Zone</h2>
+            <form @onsubmit="DeleteArticle" @formname="DeleteArticleForm" method="post" class="my-4">
+                <button class="p-3 text-sm font-bold uppercase rounded bg-red-400 text-gray-900">Delete Article</button>
+                <AntiforgeryToken />
+            </form>
+        </p>
+    }
+}
+
+<span class="text-danger">@errorMessage</span>
+
+@code {
+    private bool isEditMode => ArticleId is not null;
+    private string errorMessage = string.Empty;
+
+    [SupplyParameterFromForm]
+    ArticleModel? Article { get; set; } = new();
+    [Parameter]
+    public int? ArticleId { get; set; }
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    protected sealed override async Task OnParametersSetAsync()
+    {
+        if (ArticleId is not null)
+        {
+            Result<ArticleResponseDto?> result = await Sender
+                .Send(new GetArticleByIdForEditingQuery { Id = (int)ArticleId });
+            if (result.Success)
+            {
+                Article ??= result.Value.Adapt<ArticleModel>();
+                Article.Id = (int)ArticleId;
+            }
+            else
+            {
+                SetErrorMessage(result.Error);
+            }
+        }
+        else
+        {
+            Article ??= new();
+        }
+    }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        if (isEditMode)
+        {
+            var command = Article.Adapt<UpdateArticleCommand>();
+            Result<ArticleResponseDto?> result = await Sender.Send(command);
+            if (result.Success)
+            {
+                Article = result.Value.Adapt<ArticleModel>();
+            }
+            else
+            {
+                SetErrorMessage(result.Error);
+            }
+        }
+        else
+        {
+            var command = Article.Adapt<CreateArticleCommand>();
+            Result<ArticleResponseDto> result = await Sender.Send(command);
+            if (result.Success)
+            {
+                NavigationManager.NavigateTo($"/article-editor/{result.Value.Id}");
+            }
+            else
+            {
+                SetErrorMessage(result.Error);
+            }
+        }
+    }
+
+    private async Task DeleteArticle()
+    {
+        if (ArticleId is null)
+        {
+            return;
+        }
+
+        DeleteArticleCommand command = new() { Id = (int)ArticleId };
+        Result? result = await Sender.Send(command);
+        if (result.Success)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            SetErrorMessage(result.Error);
+        }
+    }
+
+    private void SetErrorMessage(string? error)
+    {
+        errorMessage = error ?? string.Empty;
+    }
+}
