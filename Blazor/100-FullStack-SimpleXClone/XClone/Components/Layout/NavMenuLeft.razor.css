@@ -1,0 +1,36 @@
+﻿section {
+    width: 80%;
+    border-right: 1px solid gray;
+}
+
+section div {
+    padding-left: 230px;
+}
+
+section div a, section div form button, section div button {
+    display: inline-block;
+    border-radius: 40px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    color: white;
+    font-size: 20px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+section div a:hover, section div form button:hover, section div button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button {
+    border: none;
+    background: none;
+}

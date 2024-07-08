@@ -1,0 +1,100 @@
+﻿h1, h3, h5 {
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 4.5em;
+}
+
+a {
+    text-decoration: none;
+}
+
+div p {
+
+}
+
+.section-container {
+    position: relative;
+    left: 0;
+    width: 100%;
+}
+
+.content-container {
+    width: 300px;
+}
+
+#xicon g path {
+    color: white;
+}
+
+#google-button, #apple-button {
+    background-color: white;
+}
+
+#createaccountbutton {
+    background-color: deepskyblue;
+    color: white;
+}
+
+#signinbutton {
+    color: deepskyblue;
+    border: 1px solid slategray;
+    transition: background-color 0.3s ease;
+}
+
+#signinbutton:hover {
+    background-color: rgba(0, 255, 255, 0.03);
+}
+
+.line {
+    border-top: 1px solid dimgray;
+    height: 0;
+}
+
+button {
+    width: 300px;
+    height: 40px;
+    margin: 5px 0px;
+    border-radius: 30px;
+    border: none;
+    background: none;
+    font-weight: bold;
+}
+
+button .bi {
+    vertical-align: middle;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    padding: 10px;
+    padding-left: 60px;
+    padding-right: 60px;
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#notice {
+    color: slategray;
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-bottom: 50px;
+}
+
+footer a {
+    text-decoration: none;
+    color: slategray;
+}
+
+footer p {
+    color: slategray;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,34 @@
+﻿section {
+    width: 80%;
+    border-left: 1px solid gray;
+}
+
+section div {
+    padding-left: 30px;
+    width: 70%;
+}
+
+article {
+    border: 1px solid gray;
+    border-radius: 20px;
+    padding: 15px;
+}
+
+article button {
+    width: 120px;
+    height: 40px;
+    border-radius: 30px;
+    border: none;
+    background: none;
+    font-weight: bold;
+    background-color: deepskyblue;
+    color: white;
+}
+
+h3 {
+    font-weight: bold;
+}
+
+h5 {
+    font-weight: bold;
+}

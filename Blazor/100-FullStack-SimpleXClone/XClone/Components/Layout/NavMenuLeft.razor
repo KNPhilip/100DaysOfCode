@@ -1,0 +1,81 @@
+﻿@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject SignInManager<ApplicationUser> SignInManager
+
+<section>
+    <div class="d-flex flex-column mt-3">
+        <form>
+            <button href="#">
+                <XIcon style="width: 30px; height: 30px;" />
+            </button>
+        </form>
+        <form>
+            <button href="#">
+                <HomeIcon Style="width: 30px; height: 30px; margin-right: 10px;" />
+                Home
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <ExploreIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Explore
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <NotificationIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Notifications
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <MessageIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Messages
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <ListIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Lists
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <BookmarkIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Bookmarks
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <XIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Premium
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <LightningIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Verified Orgs
+            </button>
+        </form>
+        <form>
+            <button href="#" @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <ProfileIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Profile
+            </button>
+        </form>
+        <form>
+            <button @onclick="@(() => JSRuntime.InvokeVoidAsync("alert", "This X feature is not implemented."))">
+                <MoreIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                More
+            </button>
+        </form>
+        <form action="Account/Logout" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+            <button class="d-flex flex-row">
+                <CommunityIcon Style="width: 30px; height: 30px; margin-right: 12px;" />
+                Logout
+            </button>
+        </form>
+    </div>
+</section>

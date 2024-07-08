@@ -1,0 +1,52 @@
+﻿.header-class {
+    position: relative;
+}
+
+.split-section {
+    border-bottom: 1px solid gray;
+}
+
+.header-class a {
+    text-decoration: none;
+    color: white;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.header-class a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.header-class a:first-child {
+    font-weight: bold;
+}
+
+img {
+    border-radius: 50%;
+}
+
+#form-class {
+    background-color: black;
+}
+
+#postbutton {
+    width: 70px;
+    height: 40px;
+    border-radius: 30px;
+    border: none;
+    background: none;
+    font-weight: bold;
+    background-color: deepskyblue;
+    color: white;
+}
+
+#deletebutton {
+    padding: 15px 8px;
+    border-radius: 40px;
+    transition: background-color 0.3s ease;
+}
+
+#deletebutton:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.1);
+}
