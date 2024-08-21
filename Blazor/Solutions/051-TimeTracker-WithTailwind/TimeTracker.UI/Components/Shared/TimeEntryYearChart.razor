@@ -1,0 +1,69 @@
+﻿@inject ITimeEntryService TimeEntryService
+@implements IDisposable
+
+<RadzenChart>
+    <RadzenLineSeries Data="@timeEntries" CategoryProperty="Month" Title="@currentYear"
+                      LineType="LineType.Solid" ValueProperty="TotalMinutes">
+        <RadzenMarkers MarkerType="MarkerType.Square" />
+        <RadzenSeriesDataLabels />
+    </RadzenLineSeries>
+    <RadzenValueAxis Formatter="@FormatTimeSpan">
+        <RadzenGridLines Visible="true" />
+        <RadzenAxisTitle Text="Total Duration" />
+    </RadzenValueAxis>
+</RadzenChart>
+
+@code {
+    List<YearChartTimeEntry> timeEntries = [];
+    string currentYear = DateTime.Now.Year.ToString();
+
+    protected override void OnInitialized()
+    {
+        TimeEntryService.OnChange += UpdateChart;
+        UpdateChart();
+    }
+
+    private List<YearChartTimeEntry> GetDurationsByMonth(List<TimeEntryResponseDto> timeEntries)
+    {
+        List<YearChartTimeEntry> durationByMonth = timeEntries
+            .GroupBy(te => te.Start.Month)
+            .Select(te => new YearChartTimeEntry
+            {
+                Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(te.Key),
+                TotalMinutes = te.Sum(te => (te.End?.Subtract(te.Start)).GetValueOrDefault().TotalMinutes)
+            })
+            .OrderBy(te => DateTime.ParseExact(te.Month, "MMMM", CultureInfo.CurrentCulture).Month)
+            .ToList();
+
+        return durationByMonth;
+    }
+
+    private void UpdateChart()
+    {
+        timeEntries = GetDurationsByMonth(TimeEntryService.TimeEntries);
+        if (TimeEntryService.TimeEntries.Count > 0)
+        {
+            currentYear = TimeEntryService.TimeEntries[0].Start.Year.ToString();
+        }
+    }
+
+    private string FormatTimeSpan(object value)
+    {
+        int totalMinutes = (int)((double)value);
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+
+        return $"{hours}h {minutes}m";
+    }
+
+    public void Dispose()
+    {
+        TimeEntryService.OnChange -= UpdateChart;
+    }
+
+    class YearChartTimeEntry
+    {
+        public double TotalMinutes { get; set; }
+        public required string Month { get; set; }
+    }
+}
